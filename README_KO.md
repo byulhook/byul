@@ -15,35 +15,36 @@
 
 ```bash
 npm install byul
-npx husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn
 
 ```bash
 yarn add byul
-yarn husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn Berry
 ```bash
 yarn add byul
 yarn dlx husky-init --yarn2 && yarn install
-yarn dlx husky add .husky/commit-msg 'yarn node ./byul/dist/index.js "$1"'
+echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
-### Pnpm
+### pnpm
 
 ```bash
 pnpm add byul
-pnpm husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
-```
-
-### Npx (Temporary Usage)
-
-```bash
-npx byul
-npx husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ## 2. ✨ 주요 기능
@@ -99,7 +100,30 @@ git commit -m "로그인 로직 추가"
 ```
 feature: 로그인 로직 추가 #123
 ```
+
 ![img.png](img.png)
+
+### 커스터마이징
+
+`byul.config.json` 파일을 수정하여 커밋 메시지 형식을 커스터마이징할 수 있습니다. 예를 들어, 다음과 같은 설정을 사용할 수 있습니다:
+
+```json
+{
+    "byulFormat": "(#{issueNumber}) {type}: {commitMessage}"
+}
+```
+
+`feature/login-123`에서 커밋 메시지를 사용했을 때:
+
+```bash
+git commit -m "로그인 로직 추가"
+```
+
+커밋 메시지는 다음과 같이 포맷됩니다:
+
+```
+(#123) feature: 로그인 로직 추가
+```
 
 ## 6. 🤝 기여 방법
 

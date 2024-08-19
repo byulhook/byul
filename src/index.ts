@@ -1,8 +1,21 @@
 import { simpleGit, SimpleGit } from 'simple-git';
 import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+
 const chalk = await import('chalk');
 
 const git: SimpleGit = simpleGit();
+
+function getUserConfig(): { byulFormat: string } | null {
+  try {
+    const configPath = join(process.cwd(), 'byul.config.json');
+    const configFile = readFileSync(configPath, 'utf8');
+    return JSON.parse(configFile);
+  } catch (error) {
+    console.warn('Warning: Could not read byul.config.json file. Using default format.');
+    return null;
+  }
+}
 
 async function formatCommitMessage(): Promise<void> {
   const startTime = Date.now();
@@ -29,7 +42,7 @@ async function formatCommitMessage(): Promise<void> {
     writeFileSync(commitMsgFile, formattedMessage);
 
     if (formattedMessage === commitMessage) {
-      console.log(`${chalk.default.red('Failed!')} byul could not format the commit messa ge.`);
+      console.log(`${chalk.default.red('Failed!')} byul could not format the commit message.`);
     } else {
       console.log(`${chalk.default.green('Success!')} byul has formatted the commit message.`);
     }
@@ -52,24 +65,20 @@ async function getFormattedMessage(branchName: string, commitMessage: string): P
     return commitMessage;
   }
 
-  if (branchName.match(/\d+[\.\-]\d+/)) {
+  if (branchName.match(/\d+[.-]\d+/)) {
     console.warn(chalk.default.yellow(`[2/2] ⚠️ Invalid issue number format detected in branch name "${branchName}". Keeping the original commit message.`));
     return commitMessage;
   }
 
-  let formattedMessage = `${branchType}: ${commitMessage}`;
+  const userConfig = getUserConfig();
+  let format = userConfig?.byulFormat || '{type}: {commitMessage} #{issueNumber}';
 
-  if (issueNumber) {
-    formattedMessage += ` #${issueNumber}`;
-  }
+  format = format
+    .replace('{type}', branchType)
+    .replace('{issueNumber}', issueNumber)
+    .replace('{commitMessage}', commitMessage);
 
-  return formattedMessage;
-}
-
-function logAndWarn(message: string, startTime: number): void {
-  console.log(chalk.default.yellow(message));
-  console.log(chalk.default.green(`✨ Done in ${(Date.now() - startTime) / 1000}s.`));
-  console.log();
+  return format;
 }
 
 formatCommitMessage().catch(error => {

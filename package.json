@@ -1,6 +1,6 @@
 {
   "name": "byul",
-  "version": "1.1.5",
+  "version": "1.2.7",
   "description": "Formats commit messages based on branch names to ensure consistency.",
   "main": "dist/index.js",
   "license": "MIT",

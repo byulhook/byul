@@ -14,35 +14,36 @@ You can install **byul** using your preferred package manager:
 
 ```bash
 npm install byul
-npx husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn
 
 ```bash
 yarn add byul
-yarn husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn Berry
 ```bash
 yarn add byul
 yarn dlx husky-init --yarn2 && yarn install
-yarn dlx husky add .husky/commit-msg 'yarn node ./byul/dist/index.js "$1"'
+echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### pnpm
 
 ```bash
 pnpm add byul
-pnpm husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
-```
-
-### npx (Temporary Usage)
-
-```bash
-npx byul
-npx husky add .husky/commit-msg 'node ./node_modules/byul/dist/index.js "$1"'
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ## 2. ✨ Features
@@ -94,6 +95,35 @@ git commit -m "Add login logic"
 ```
 
 **byul** will automatically format the message to:
+
+```
+feature: Add login logic #123
+```
+
+### Customization
+
+You can customize the commit message format by modifying the `byul.config.json` file. For example, with the following configuration:
+
+```json
+{
+    "byulFormat": "#{issueNumber} {commitMessage} ({type})"
+}
+```
+
+Given the same branch `feature/login-123` and commit message:
+
+```bash
+git commit -m "Add login logic"
+```
+
+The commit message will be formatted as:
+
+```
+#123 Add login logic (feature)
+```
+
+This flexibility allows you to define a format that best suits your project's needs.
+
 
 ```
 feature: Add login logic #123
