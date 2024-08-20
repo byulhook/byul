@@ -1,0 +1,28 @@
+name: ✨ Feature
+description: Do you have a new feature or specification?
+title: "[feature] "
+labels: ["✨ feature"]
+body:
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 📄 Description
+      description: Please describe the new feature.
+      placeholder: Provide detailed description!
+    validations:
+      required: true
+  - type: textarea
+    id: bug-simulation
+    attributes:
+      label: ✅ Tasks
+      description: Please list the tasks that need to be done.
+      placeholder: Break them down as much as possible!
+    validations:
+      required: true
+  - type: textarea
+    id: bug-more
+    attributes:
+      label: 📝 Notes
+      description: Any additional notes?
+    validations:
+      required: false

@@ -1,0 +1,36 @@
+name: 😢 Help
+description: Do you need help?
+title: "[help] "
+labels: ["😢 help"]
+body:
+  - type: textarea
+    id: help-description
+    attributes:
+      label: 😢 Problem Description
+      description: Please describe the problem you need help with.
+      placeholder: Provide detailed description.
+    validations:
+      required: true
+  - type: textarea
+    id: help-context
+    attributes:
+      label: 🌐 Context
+      description: Please describe the context where the problem occurred.
+      placeholder: Provide as much detail as possible.
+    validations:
+      required: true
+  - type: textarea
+    id: help-attempts
+    attributes:
+      label: 💡 Attempts to Solve
+      description: Please list any attempts you made to solve the problem.
+      placeholder: List all the methods you tried.
+    validations:
+      required: false
+  - type: textarea
+    id: help-more
+    attributes:
+      label: 📝 Additional Notes
+      description: Any additional notes?
+    validations:
+      required: false

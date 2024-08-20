@@ -1,0 +1,45 @@
+name: 🐞 Bug
+description: Did you encounter a bug?
+title: "[bug] "
+labels: ["🐞 bugFix"]
+projects: []
+assignees:
+  -
+body:
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐞 Description
+      description: Please describe the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-simulation
+    attributes:
+      label: 💻 Bug Simulation
+      description: Please outline the steps to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-log
+    attributes:
+      label: 📄 Logs
+      description: Please provide logs if available.
+    validations:
+      required: false
+  - type: textarea
+    id: bug-os
+    attributes:
+      label: 🌏 Environment
+      description: Please specify the environment where the bug occurred.
+      placeholder: |
+        OS: macOS 14.5
+    validations:
+      required: false
+  - type: textarea
+    id: bug-more
+    attributes:
+      label: 📝 Notes
+      description: Any additional notes?
+    validations:
+      required: false
