@@ -18,8 +18,6 @@ npm install byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
 # UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -30,8 +28,6 @@ yarn add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
 # UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -43,8 +39,6 @@ yarn dlx husky-init --yarn2 && yarn install
 echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
 # UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -55,8 +49,6 @@ pnpm add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
 # UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -67,8 +59,6 @@ bun add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
 # UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
