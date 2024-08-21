@@ -4,6 +4,7 @@
 
 ![npm](https://img.shields.io/npm/v/byul)
 ![license](https://img.shields.io/npm/l/byul)
+
 ### [English](README.md) | [Korean](README_KO.md)
 
 ## 1. 🚀 Installation
@@ -15,7 +16,10 @@ You can install **byul** using your preferred package manager:
 ```bash
 npm install byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -24,16 +28,23 @@ echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.js
 ```bash
 yarn add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn Berry
+
 ```bash
 yarn add byul
 yarn dlx husky-init --yarn2 && yarn install
 echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -42,7 +53,22 @@ echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.js
 ```bash
 pnpm add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
+```
+
+### Bun
+
+```bash
+bun add byul
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
+chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -116,7 +142,7 @@ You can customize the commit message format by modifying the `byul.config.json` 
 
 ```json
 {
-    "byulFormat": "#{issueNumber} {commitMessage} ({type})"
+  "byulFormat": "#{issueNumber} {commitMessage} ({type})"
 }
 ```
 
@@ -133,7 +159,6 @@ The commit message will be formatted as:
 ```
 
 This flexibility allows you to define a format that best suits your project's needs.
-
 
 ```
 feature: Add login logic #123
