@@ -16,7 +16,9 @@
 ```bash
 npm install byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -25,16 +27,21 @@ echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.js
 ```bash
 yarn add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn Berry
+
 ```bash
 yarn add byul
 yarn dlx husky-init --yarn2 && yarn install
 echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -43,7 +50,9 @@ echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.js
 ```bash
 pnpm add byul
 echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
 chmod +x .husky/commit-msg
+# Windows (PowerShell)
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
@@ -109,7 +118,7 @@ feature: 로그인 로직 추가 #123
 
 ```json
 {
-    "byulFormat": "(#{issueNumber}) {type}: {commitMessage}"
+  "byulFormat": "(#{issueNumber}) {type}: {commitMessage}"
 }
 ```
 
