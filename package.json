@@ -29,6 +29,7 @@
   ],
   "homepage": "https://github.com/love1ace/byul#readme",
   "dependencies": {
+    "byul": "^1.2.7",
     "chalk": "^5.3.0",
     "simple-git": "^3.25.0"
   },
