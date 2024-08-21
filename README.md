@@ -60,6 +60,18 @@ attrib -r +a .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
+### Bun
+
+```bash
+bun add byul
+echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
+# UNIX (macOS, Linux)
+chmod +x .husky/commit-msg
+# Windows (PowerShell)
+attrib -r +a .husky/commit-msg
+echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
+```
+
 ## 2. ✨ Features
 
 **byul** offers the following features:
