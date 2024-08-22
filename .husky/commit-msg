@@ -1,0 +1,7 @@
+
+# START BYUL HOOK
+node ./node_modules/byul/dist/index.js "$1"
+# END BYUL HOOK
+
+
+# Existing hook content
