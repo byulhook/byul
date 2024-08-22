@@ -47,7 +47,7 @@ async function formatCommitMessage(): Promise<void> {
 
     writeFileSync(commitMsgFile, formattedMessage);
 
-    console.log(`${chalk.default.green('Success!')} Commit message has been formatted.`);
+    console.log(`${chalk.default.green('Success!')} byul has formatted the commit message.`);
   } catch (error) {
     console.error(chalk.default.red('Error formatting commit message:', error));
     process.exit(1);
@@ -61,6 +61,24 @@ async function formatTitle(branchName: string, title: string): Promise<string> {
   const [branchType] = branchName.split('/');
   const issueNumberMatch = branchName.match(/\d+/);
   const issueNumber = issueNumberMatch ? issueNumberMatch[0] : '';
+
+  if (!branchName.includes('/')) {
+    console.warn(
+      chalk.default.yellow(
+        `[2/2] ⚠️ The branch name "${branchName}" does not follow the required format (e.g., "type/issue"). Keeping the original commit message.`
+      )
+    );
+    return title;
+  }
+
+  if (branchName.match(/\d+[.-]\d+/)) {
+    console.warn(
+      chalk.default.yellow(
+        `[2/2] ⚠️ Invalid issue number format detected in branch name "${branchName}". Keeping the original commit message.`
+      )
+    );
+    return title;
+  }
 
   const userConfig = getUserConfig();
   let format = userConfig?.byulFormat || '{type}: {commitMessage} #{issueNumber}';
@@ -79,8 +97,7 @@ function getUserConfig(): { byulFormat: string } | null {
     const configFile = readFileSync(configPath, 'utf8');
     return JSON.parse(configFile);
   } catch (error) {
-    console.warn(error);
-    console.warn('Warning: Could not read byul.config.json file. Using default format.');
+    console.warn('Warning: Could not read byul.config.json file. Using default format.', error);
     return null;
   }
 }

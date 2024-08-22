@@ -31,22 +31,12 @@ yarn add byul
 
 ```bash
 pnpm add byul
-
 ```
 
 ### Bun
 
 ```bash
 bun add byul
-```
-
-### Bun
-
-```bash
-bun add byul
-echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
-chmod +x .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ## 2. ✨ Features
