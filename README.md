@@ -5,8 +5,6 @@
 ![npm](https://img.shields.io/npm/v/byul)
 ![license](https://img.shields.io/npm/l/byul)
 
-### [English](README.md) | [Korean](README_KO.md)
-
 ## 1. 🚀 Installation
 
 You can install **byul** using your preferred package manager:
@@ -15,61 +13,30 @@ You can install **byul** using your preferred package manager:
 
 ```bash
 npm install byul
-echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
-# UNIX (macOS, Linux)
-chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn
 
 ```bash
 yarn add byul
-echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
-# UNIX (macOS, Linux)
-chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Yarn Berry
 
 ```bash
 yarn add byul
-yarn dlx husky-init --yarn2 && yarn install
-echo 'yarn node ./byul/dist/index.js "$1"' > .husky/commit-msg
-# UNIX (macOS, Linux)
-chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### pnpm
 
 ```bash
 pnpm add byul
-echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
-# UNIX (macOS, Linux)
-chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ### Bun
 
 ```bash
 bun add byul
-echo 'node ./node_modules/byul/dist/index.js "$1"' > .husky/commit-msg
-# UNIX (macOS, Linux)
-chmod +x .husky/commit-msg
-# Windows (PowerShell)
-attrib -r +a .husky/commit-msg
-echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
 ## 2. ✨ Features
