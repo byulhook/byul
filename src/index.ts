@@ -8,7 +8,8 @@ const git: SimpleGit = simpleGit();
 async function formatCommitMessage(): Promise<void> {
   const startTime = Date.now();
   console.log();
-  console.log(chalk.default.cyan("🔄 Starting commit message formatter"));
+  console.log(chalk.default.cyan("🔄 Starting byul - Developed by love1ace"));
+  console.log(chalk.default.gray("[1/2] 🔍 Retrieving branch information..."));
 
   try {
     const branchInfo = await git.branch();
@@ -21,6 +22,8 @@ async function formatCommitMessage(): Promise<void> {
       );
       return;
     }
+
+    console.log(chalk.default.gray("[2/2] 📝 Formatting commit message..."));
 
     const commitMessage = readFileSync(commitMsgFile, "utf8");
 
@@ -49,7 +52,9 @@ async function formatCommitMessage(): Promise<void> {
     writeFileSync(commitMsgFile, formattedMessage);
 
     console.log(
-      `${chalk.default.green("Success!")} Commit message has been formatted.`
+      `${chalk.default.green(
+        "Success!"
+      )} byul has formatted the commit message.`
     );
   } catch (error) {
     console.error(chalk.default.red("Error formatting commit message:", error));
@@ -66,6 +71,24 @@ async function formatTitle(branchName: string, title: string): Promise<string> {
   const [branchType] = branchName.split("/");
   const issueNumberMatch = branchName.match(/\d+/);
   const issueNumber = issueNumberMatch ? issueNumberMatch[0] : "";
+
+  if (!branchName.includes("/")) {
+    console.warn(
+      chalk.default.yellow(
+        `[2/2] ⚠️ The branch name "${branchName}" does not follow the required format (e.g., "type/issue"). Keeping the original commit message.`
+      )
+    );
+    return title;
+  }
+
+  if (branchName.match(/\d+[.-]\d+/)) {
+    console.warn(
+      chalk.default.yellow(
+        `[2/2] ⚠️ Invalid issue number format detected in branch name "${branchName}". Keeping the original commit message.`
+      )
+    );
+    return title;
+  }
 
   const userConfig = getUserConfig();
   let format =
