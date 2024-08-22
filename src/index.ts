@@ -8,7 +8,8 @@ const git: SimpleGit = simpleGit();
 async function formatCommitMessage(): Promise<void> {
   const startTime = Date.now();
   console.log();
-  console.log(chalk.default.cyan('🔄 Starting commit message formatter'));
+  console.log(chalk.default.cyan('🔄 Starting byul - Developed by love1ace'));
+  console.log(chalk.default.gray('[1/2] 🔍 Retrieving branch information...'));
 
   try {
     const branchInfo = await git.branch();
@@ -19,6 +20,8 @@ async function formatCommitMessage(): Promise<void> {
       console.error(chalk.default.red('Error: No commit message file provided.'));
       return;
     }
+
+    console.log(chalk.default.gray('[2/2] 📝 Formatting commit message...'));
 
     const commitMessage = readFileSync(commitMsgFile, 'utf8');
 
