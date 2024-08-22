@@ -12,7 +12,8 @@
   },
   "keywords": [
     "commit",
-    "message",
+    "huksy",
+    "lefthook",
     "format",
     "git",
     "branch",
@@ -40,6 +41,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "preinstall": "node dist/setup.mjs"
   }
 }
