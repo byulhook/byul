@@ -71,7 +71,6 @@ chmod +x .husky/commit-msg
 echo '{"byulFormat": "{type}: {commitMessage} #{issueNumber}"}' > byul.config.json
 ```
 
-
 ## 2. ✨ Features
 
 **byul** offers the following features:

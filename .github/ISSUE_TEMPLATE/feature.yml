@@ -1,7 +1,7 @@
 name: ✨ Feature
 description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["✨ feature"]
+title: '[feature] '
+labels: ['✨ feature']
 body:
   - type: textarea
     id: bug-description

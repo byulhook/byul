@@ -1,7 +1,7 @@
 name: 🐞 Bug
 description: Did you encounter a bug?
-title: "[bug] "
-labels: ["🐞 bugFix"]
+title: '[bug] '
+labels: ['🐞 bugFix']
 projects: []
 assignees:
   -
