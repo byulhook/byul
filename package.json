@@ -1,6 +1,6 @@
 {
   "name": "byul",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Formats commit messages based on branch names to ensure consistency.",
   "main": "dist/index.js",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "author": "love1ace",
   "repository": {
     "type": "git",
-    "url": "https://github.com/love1ace/byul.git"
+    "url": "https://github.com/byulhook/byul.git"
   },
   "keywords": [
     "commit",
@@ -21,16 +21,16 @@
     "byul"
   ],
   "bugs": {
-    "url": "https://github.com/love1ace/byul/issues"
+    "url": "https://github.com/byulhook/byul/issues"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://github.com/love1ace/byul#readme",
+  "homepage": "https://github.com/byulhook/byul#readme",
   "dependencies": {
-    "byul": "^1.2.7",
+    "byul": "^1.2.9",
     "chalk": "^5.3.0",
     "simple-git": "^3.25.0"
   },
