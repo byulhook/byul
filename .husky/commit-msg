@@ -1,7 +1,7 @@
 
-# START BYUL HOOK
+# byulFormat
 node ./node_modules/byul/dist/index.js "$1"
-# END BYUL HOOK
+# byulFormat
 
 
 # Existing hook content
