@@ -38,7 +38,6 @@ pnpm add byul
 ```bash
 bun add byul
 ```
-
 ## 2. ✨ Features
 
 **byul** offers the following features:
