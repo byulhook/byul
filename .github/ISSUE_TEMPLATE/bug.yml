@@ -1,4 +1,4 @@
-name: 🐞 Bug
+name: 🐞 bug
 description: Did you encounter a bug?
 title: "[bug] "
 labels: ["🐞 bugFix"]
