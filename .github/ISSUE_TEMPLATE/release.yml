@@ -1,18 +1,18 @@
-name: feat
-description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["feat"]
+name: release
+description: Are you releasing or deploying the project?
+title: "[release] "
+labels: ["release"]
 body:
   - type: textarea
-    id: feat-description
+    id: release-description
     attributes:
       label: 📄 Description
-      description: Please describe the new feature.
+      description: Please describe the release or deployment.
       placeholder: Provide detailed description!
     validations:
       required: true
   - type: textarea
-    id: feat-tasks
+    id: release-tasks
     attributes:
       label: ✅ Tasks
       description: Please list the tasks that need to be done.
@@ -20,7 +20,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: feat-notes
+    id: release-notes
     attributes:
       label: 📝 Notes
       description: Any additional notes?

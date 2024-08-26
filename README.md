@@ -1,11 +1,11 @@
 # byul
 
-**byul** is a tool that automatically formats Git commit messages based on branch names, ensuring consistent and meaningful commit history.
+**byul** is a tool that automatically formats Git commit messages based on branch names
 
 ![npm](https://img.shields.io/npm/v/byul)
 ![license](https://img.shields.io/npm/l/byul)
 
-## 1. 🚀 Installation
+## Installation
 
 You can install **byul** using your preferred package manager:
 
@@ -16,12 +16,6 @@ npm install byul
 ```
 
 ### Yarn
-
-```bash
-yarn add byul
-```
-
-### Yarn Berry
 
 ```bash
 yarn add byul
@@ -38,24 +32,30 @@ pnpm add byul
 ```bash
 bun add byul
 ```
-## 2. ✨ Features
+
+## Setup error
+If the `byul.config.json` file hasn’t been created, run:
+```bash
+node node_modules/byul/dist/setup.mjs
+```
+Or, you can manually create the `byul.config.json` file and add this code:
+
+```json
+{
+"byulFormat": "{type}: {commitMessage} (#{issueNumber})"
+}
+```
+
+## Features
 
 **byul** offers the following features:
 
 - **Automatic Commit Message Formatting**: Based on your branch name, **byul** automatically formats commit messages to ensure consistency.
-- **Integration with Husky**: Easily integrates with Husky to automate commit message formatting without additional setup.
+- **Integration with git hooks**: Easily integrates with byulhook, lefthook, Husky to automate commit message formatting without additional setup.
 - **Customizable**: Supports custom branch naming conventions.
 - **Non-Disruptive**: If an existing `commit-msg` hook exists, **byul** appends its functionality, ensuring that your current workflow remains intact.
 
-## 3. 🔧 Husky Integration
-
-**byul** works seamlessly with [Husky](https://github.com/typicode/husky) to automate Git hook setup. After installation, Husky will automatically run **byul** during the commit process to format messages.
-
-### SetupHooks.js
-
-The Git hooks are set up through a `setupHooks.cjs` script that runs during the installation process. This script ensures that **byul** is correctly integrated into your project's workflow, even if you already have a `commit-msg` hook in place.
-
-## 4. 🛠️ Recommended Branch Naming Conventions
+## Recommended Branch Naming Conventions
 
 To maximize the effectiveness of **byul**, it is recommended to use the following branch naming conventions:
 
@@ -70,7 +70,7 @@ Branch names that do not follow the recommended format may not work correctly wi
 - `release/release-1.0.2`
 - `develop/develop3-132`
 
-## 5. ⚙️ How It Works
+## How It Works
 
 When you commit changes using Git, **byul** automatically formats the commit message by following these steps:
 
@@ -116,39 +116,16 @@ The commit message will be formatted as:
 
 This flexibility allows you to define a format that best suits your project's needs.
 
-```
-feature: Add login logic #123
-```
-
 ![img.png](img.png)
 
-## 6. 🤝 Contributing
+## Contributing
 
-We welcome contributions to **byul**! Whether it's reporting a bug, suggesting an enhancement, or submitting a pull request, your input is valued.
+We welcome contributions to **byulhook**! Whether it's reporting a bug, suggesting an enhancement, or submitting a pull request, your input is valued.
 
-### Steps to Contribute:
-
-1. Fork the repository on GitHub.
-2. Create a new branch from `main` (e.g., `git checkout -b feature/my-feature`).
-3. Implement your changes.
-4. Commit your changes following **byul**'s commit conventions.
-5. Push your branch (`git push origin feature/my-feature`).
-6. Open a pull request against the `main` branch.
-
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+## Contact
 
 For any questions, suggestions, or feedback, please contact [love1ace](mailto:lovelacedud@gmail.com).
-
-## ❓ FAQ
-
-### Why aren't my commit messages being formatted?
-
-Ensure that your branch follows the recommended naming conventions (e.g., `feature/`, `bugfix/`). Also, make sure **byul** is properly installed and Husky is correctly set up in your project.
-
-### How do I customize the branch naming conventions?
-
-You can modify the branch naming conventions directly in the **byul** configuration. Check the documentation for more details.

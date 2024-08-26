@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
+import { writeFileSync, existsSync, readFileSync } from 'fs';
+import path, { join } from 'path';
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,7 +10,7 @@ function findGitOrHuskyDir(startDir) {
   let currentDir = startDir;
 
   while (currentDir !== path.parse(currentDir).root) {
-    if (fs.existsSync(path.join(currentDir, ".git")) || fs.existsSync(path.join(currentDir, ".husky"))) {
+    if (existsSync(path.join(currentDir, ".git")) || existsSync(path.join(currentDir, ".husky")) || existsSync(path.join(currentDir, "lefthook.yml")) || existsSync(path.join(currentDir, "byulhook.yml"))) {
       return currentDir;
     }
     currentDir = path.dirname(currentDir);
@@ -19,66 +19,78 @@ function findGitOrHuskyDir(startDir) {
 
 const rootDir = findGitOrHuskyDir(__dirname);
 
+function writeConfigFile(filePath, defaultConfig) {
+  if (!existsSync(filePath)) {
+    writeFileSync(filePath, JSON.stringify(defaultConfig, null, 2), 'utf8');
+  } else {
+    const configFile = readFileSync(filePath, "utf8");
+    let config = configFile.trim() ? JSON.parse(configFile) : {};
+
+    if (!config.hasOwnProperty('byulFormat')) {
+      config.byulFormat = defaultConfig.byulFormat;
+      writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
+    }
+  }
+}
+
 function setupCommitMsgHook() {
   const hookName = "commit-msg";
   const gitHookFile = path.join(rootDir, ".git", "hooks", hookName);
   const huskyHookFile = path.join(rootDir, ".husky", hookName);
+  const lefthookConfigFile = path.join(rootDir, "lefthook.yml");
+  const byulhookConfigFile = path.join(rootDir, "byulhook.yml");
 
-  const useHusky = fs.existsSync(path.join(rootDir, ".husky"));
+  const useHusky = existsSync(path.join(rootDir, ".husky"));
+  const useLefthook = existsSync(lefthookConfigFile);
+  const useByulhook = existsSync(byulhookConfigFile);
 
-  const hookFile = useHusky ? huskyHookFile : gitHookFile;
-
-  const startMarker = "# byulFormat";
-  const endMarker = "# byulFormat";
-
-  let existingHookContent = "";
-  if (fs.existsSync(hookFile)) {
-    const content = fs.readFileSync(hookFile, "utf8");
-    if (content.includes('node ./node_modules/byul/dist/index.js "$1"')) {
-      console.log("byul settings already exists.");
-      return;
-    }
-    const regex = new RegExp(`${startMarker}[\\s\\S]*?${endMarker}`, "g");
-    existingHookContent = content.replace(regex, "").trim();
-  }
-
-  let byulHookScript;
+  let hookFile;
 
   if (useHusky) {
-    byulHookScript = `
-${startMarker}
+    hookFile = huskyHookFile;
+    const byulHookScript = `
+# byulFormat
 node ./node_modules/byul/dist/index.js "$1"
-${endMarker}
+# byulFormat
 `;
+    writeFileSync(hookFile, byulHookScript, { mode: 0o755 });
+  } else if (useLefthook) {
+    hookFile = lefthookConfigFile;
+    const lefthookConfig = readFileSync(lefthookConfigFile, "utf8");
+    const lefthookScript = `
+commit-msg:
+  commands:
+    byul:
+      run: "node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG"
+`;
+    if (!lefthookConfig.includes('node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG')) {
+      writeFileSync(lefthookConfigFile, lefthookScript, { flag: 'a' });
+    }
+  } else if (useByulhook) {
+    hookFile = byulhookConfigFile;
+    const byulhookConfig = readFileSync(byulhookConfigFile, "utf8");
+    const byulhookScript = `
+commit-msg:
+  commands:
+    byul:
+      run: "node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG"
+`;
+    if (!byulhookConfig.includes('node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG')) {
+      writeFileSync(byulhookConfigFile, byulhookScript, { flag: 'a' });
+    }
   } else {
-    byulHookScript = `
-${startMarker}
+    hookFile = gitHookFile;
+    const byulHookScript = `
+# byulFormat
 COMMIT_MSG_FILE="$1"
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
 node .node_modules/byul/dist/index.js "$COMMIT_MSG_FILE" "$BRANCH_NAME"
-${endMarker}
+# byulFormat
 `;
+
+    writeFileSync(hookFile, `#!/bin/sh\n\n${byulHookScript}\n`, { mode: 0o755 });
   }
 
-  let finalHookScript;
-
-  if (useHusky) {
-    finalHookScript = `${byulHookScript}
-
-# Existing hook content
-${existingHookContent}`;
-  } else {
-    finalHookScript = `#!/bin/sh
-
-${byulHookScript}
-
-# Existing hook content
-${existingHookContent}`;
-  }
-
-  fs.writeFileSync(hookFile, finalHookScript, { mode: 0o755 });
-
-  console.log("byul settings successfully");
 
   if (process.platform === "win32") {
     execSync(`attrib -r +a "${hookFile}"`);
@@ -88,31 +100,15 @@ ${existingHookContent}`;
 }
 
 function setupByulConfig() {
-  const byulConfigPath = path.join(rootDir, "byul.config.json");
+  const projectRoot = process.env.INIT_CWD || process.cwd();
+  const byulConfigPath = join(projectRoot, "byul.config.json");
 
-  if (!fs.existsSync(byulConfigPath)) {
-    const byulConfig = {
-      byulFormat: "{type}: {commitMessage} (#{issueNumber})",
-    };
-    fs.writeFileSync(byulConfigPath, JSON.stringify(byulConfig, null, 2));
-    console.log("byul.config.json file created successfully");
-  } else {
-    const configFile = fs.readFileSync(byulConfigPath, "utf8");
-    let config = {};
+  const defaultConfig = {
+    byulFormat: "{type}: {commitMessage} (#{issueNumber})",
+  };
 
-    if (configFile.trim()) {
-      config = JSON.parse(configFile);
-    }
-
-    if (!config.hasOwnProperty('byulFormat')) {
-      config.byulFormat = "{type}: {commitMessage} (#{issueNumber})";
-      fs.writeFileSync(byulConfigPath, JSON.stringify(config, null, 2));
-      console.log("byulFormat added to existing byul.config.json file");
-    } else {
-      console.log("byulFormat already exists in byul.config.json file");
-    }
-  }
+  writeConfigFile(byulConfigPath, defaultConfig);
 }
 
-setupCommitMsgHook();
 setupByulConfig();
+setupCommitMsgHook();

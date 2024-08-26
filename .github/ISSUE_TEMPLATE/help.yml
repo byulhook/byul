@@ -1,7 +1,7 @@
-name: 😢 help
+name: help
 description: Do you need help?
 title: "[help] "
-labels: ["😢 help"]
+labels: ["help"]
 body:
   - type: textarea
     id: help-description
