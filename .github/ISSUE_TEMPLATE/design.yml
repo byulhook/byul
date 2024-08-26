@@ -1,18 +1,18 @@
-name: feat
-description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["feat"]
+name: design
+description: Do you have UI design changes or CSS updates?
+title: "[design] "
+labels: ["design"]
 body:
   - type: textarea
-    id: feat-description
+    id: design-description
     attributes:
       label: 📄 Description
-      description: Please describe the new feature.
+      description: Please describe the design or CSS changes.
       placeholder: Provide detailed description!
     validations:
       required: true
   - type: textarea
-    id: feat-tasks
+    id: design-tasks
     attributes:
       label: ✅ Tasks
       description: Please list the tasks that need to be done.
@@ -20,7 +20,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: feat-notes
+    id: design-notes
     attributes:
       label: 📝 Notes
       description: Any additional notes?

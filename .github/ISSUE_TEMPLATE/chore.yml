@@ -1,18 +1,18 @@
-name: feat
-description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["feat"]
+name: chore
+description: Do you have miscellaneous tasks or minor updates?
+title: "[chore] "
+labels: ["chore"]
 body:
   - type: textarea
-    id: feat-description
+    id: chore-description
     attributes:
       label: 📄 Description
-      description: Please describe the new feature.
+      description: Please describe the chore or minor update.
       placeholder: Provide detailed description!
     validations:
       required: true
   - type: textarea
-    id: feat-tasks
+    id: chore-tasks
     attributes:
       label: ✅ Tasks
       description: Please list the tasks that need to be done.
@@ -20,7 +20,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: feat-notes
+    id: chore-notes
     attributes:
       label: 📝 Notes
       description: Any additional notes?

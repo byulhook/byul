@@ -1,7 +1,0 @@
-
-# byulFormat
-node ./node_modules/byul/dist/index.js "$1"
-# byulFormat
-
-
-# Existing hook content

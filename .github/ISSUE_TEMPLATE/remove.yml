@@ -1,18 +1,18 @@
-name: feat
-description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["feat"]
+name: remove
+description: Are you deleting files?
+title: "[remove] "
+labels: ["remove"]
 body:
   - type: textarea
-    id: feat-description
+    id: remove-description
     attributes:
       label: 📄 Description
-      description: Please describe the new feature.
+      description: Please describe the files that are being removed.
       placeholder: Provide detailed description!
     validations:
       required: true
   - type: textarea
-    id: feat-tasks
+    id: remove-tasks
     attributes:
       label: ✅ Tasks
       description: Please list the tasks that need to be done.
@@ -20,7 +20,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: feat-notes
+    id: remove-notes
     attributes:
       label: 📝 Notes
       description: Any additional notes?
