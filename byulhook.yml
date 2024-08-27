@@ -1,0 +1,19 @@
+# hook name:
+#   This is the name of the Git hook, such as 'pre-commit', 'commit-msg', etc.
+#   commands:
+#     command name:
+#       A user-defined name for the command. This can be any descriptive name you choose.
+#       run: 'command to run'
+#       The shell command or script that will be executed when the hook is triggered.
+#
+# Example:
+#
+# pre-commit:
+#   commands:
+#     lint:
+#       run: 'npm run lint'
+
+commit-msg:
+  commands:
+    byul:
+      run: "node dist/index.js .git/COMMIT_EDITMSG"

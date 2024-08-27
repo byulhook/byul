@@ -1,18 +1,18 @@
-name: feat
-description: Do you have a new feature or specification?
-title: "[feature] "
-labels: ["feat"]
+name: test
+description: Are you adding or modifying tests?
+title: "[test] "
+labels: ["test"]
 body:
   - type: textarea
-    id: feat-description
+    id: test-description
     attributes:
       label: 📄 Description
-      description: Please describe the new feature.
+      description: Please describe the tests being added or modified.
       placeholder: Provide detailed description!
     validations:
       required: true
   - type: textarea
-    id: feat-tasks
+    id: test-tasks
     attributes:
       label: ✅ Tasks
       description: Please list the tasks that need to be done.
@@ -20,7 +20,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: feat-notes
+    id: test-notes
     attributes:
       label: 📝 Notes
       description: Any additional notes?
