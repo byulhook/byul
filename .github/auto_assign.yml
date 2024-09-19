@@ -1,0 +1,8 @@
+# Set to true to add reviewers to pull requests
+addReviewers: true
+
+# Set to 'author' to add PR's author as assignee
+addAssignees: author
+
+skipKeywords:
+  - wip
