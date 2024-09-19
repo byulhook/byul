@@ -86,6 +86,13 @@ async function formatTitle(branchName: string, title: string): Promise<string> {
   let branchType = "";
   let issueNumber = "";
 
+  if (!branchName.includes("/")) {
+    console.warn(
+      `${ANSI_COLORS.yellow}[2/2] ⚠️ The branch name "${branchName}" does not follow the required format. Keeping the original commit message.${ANSI_COLORS.reset}`
+    );
+    return title;
+  }
+
   const parts = branchName.split("/");
   branchType = parts[parts.length - 2] || parts[0];
 
