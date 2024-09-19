@@ -1,4 +1,3 @@
-version: 1
 language: "ko-KR"
 reviews:
   request_changes_workflow: false
@@ -15,3 +14,5 @@ reviews:
       - "main"
       - "develop"
       - "release/*"
+chat:
+  auto_reply: true

@@ -1,0 +1,41 @@
+feat:
+  - head-branch: ['^feat', 'feat']
+
+setting:
+ - head-branch: ['^setting', 'setting']
+
+design:
+  - head-branch: ['^design', 'design']
+
+fix:
+  - head-branch: ['^fix', 'fix']
+
+chore:
+  - head-branch: ['^chore', 'chore']
+
+hotfix:
+  - head-branch: ['^hotfix', 'hotfix']
+
+style:
+  - head-branch: ['^style', 'style']
+
+refactor:
+  - head-branch: ['^refactor', 'refactor']
+
+test:
+  - head-branch: ['^test', 'test']
+
+docs:
+  - head-branch: ['^docs', 'docs']
+
+rename:
+  - head-branch: ['^rename', 'rename']
+
+remove:
+  - head-branch: ['^remove', 'remove']
+
+release:
+  - head-branch: ['^release', 'release']
+
+init:
+  - head-branch: ['^init', 'init']

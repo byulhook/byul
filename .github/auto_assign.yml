@@ -1,0 +1,11 @@
+addReviewers: true
+addAssignees: author
+
+reviewers:
+  - nakyeonko3
+  - love1ace
+
+numberOfReviewers: 2
+
+skipKeywords:
+  - wip
