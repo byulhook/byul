@@ -2,13 +2,13 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
 const ANSI_COLORS = {
-    cyan: '\x1b[36m',
-    gray: '\x1b[90m',
-    green: '\x1b[32m',
-    red: '\x1b[31m',
-    blue: '\x1b[34m',
-    yellow: '\x1b[33m',
-    reset: '\x1b[0m'
+    cyan: "\x1b[36m",
+    gray: "\x1b[90m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    blue: "\x1b[34m",
+    yellow: "\x1b[33m",
+    reset: "\x1b[0m",
 };
 async function formatCommitMessage() {
     const startTime = Date.now();
@@ -16,7 +16,9 @@ async function formatCommitMessage() {
     console.log(`${ANSI_COLORS.cyan}🔄 Starting byul - Developed by love1ace${ANSI_COLORS.reset}`);
     console.log(`${ANSI_COLORS.gray}[1/2] 🔍 Retrieving branch information...${ANSI_COLORS.reset}`);
     try {
-        const branchName = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+        const branchName = execSync("git rev-parse --abbrev-ref HEAD")
+            .toString()
+            .trim();
         const commitMsgFile = process.env.HUSKY_GIT_PARAMS || process.argv[2];
         if (!commitMsgFile) {
             console.error(`${ANSI_COLORS.red}Error: No commit message file provided.${ANSI_COLORS.reset}`);
@@ -48,15 +50,17 @@ async function formatCommitMessage() {
     console.log();
 }
 async function formatTitle(branchName, title) {
-    const [branchType] = branchName.split("/");
-    const issueNumberMatch = branchName.match(/\d+/);
-    const issueNumber = issueNumberMatch ? issueNumberMatch[0] : "";
-    if (!branchName.includes("/")) {
-        console.warn(`${ANSI_COLORS.yellow}[2/2] ⚠️ The branch name "${branchName}" does not follow the required format (e.g., "type/issue"). Keeping the original commit message.${ANSI_COLORS.reset}`);
-        return title;
+    let branchType = "";
+    let issueNumber = "";
+    const parts = branchName.split("/");
+    branchType = parts[parts.length - 2] || parts[0];
+    const lastPart = parts[parts.length - 1];
+    const numberMatch = lastPart.match(/-(\d+)$/);
+    if (numberMatch) {
+        issueNumber = numberMatch[1];
     }
-    if (branchName.match(/\d+[.-]\d+/)) {
-        console.warn(`${ANSI_COLORS.yellow}[2/2] ⚠️ Invalid issue number format detected in branch name "${branchName}". Keeping the original commit message.${ANSI_COLORS.reset}`);
+    if (!branchType) {
+        console.warn(`${ANSI_COLORS.yellow}[2/2] ⚠️ The branch name "${branchName}" does not follow the required format. Keeping the original commit message.${ANSI_COLORS.reset}`);
         return title;
     }
     const userConfig = getUserConfig();
