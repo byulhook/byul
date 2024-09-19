@@ -26,76 +26,43 @@ function writeConfigFile(filePath, defaultConfig) {
     const configFile = readFileSync(filePath, "utf8");
     let config = configFile.trim() ? JSON.parse(configFile) : {};
 
-    if (!config.hasOwnProperty('byulFormat')) {
-      config.byulFormat = defaultConfig.byulFormat;
-      writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
-    }
+    // 기존 설정을 유지하면서 새로운 설정 추가
+    config = { ...defaultConfig, ...config };
+    writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
   }
 }
 
 function setupCommitMsgHook() {
-  const hookName = "commit-msg";
-  const gitHookFile = path.join(rootDir, ".git", "hooks", hookName);
-  const huskyHookFile = path.join(rootDir, ".husky", hookName);
-  const lefthookConfigFile = path.join(rootDir, "lefthook.yml");
-  const byulhookConfigFile = path.join(rootDir, "byulhook.yml");
+  const hookName = "prepare-commit-msg";
+  const gitHookDir = path.join(rootDir, ".git", "hooks");
+  const huskyHookDir = path.join(rootDir, ".husky");
+  const lefthookHookDir = path.join(rootDir, ".lefthook");
+  const byulhookHookDir = path.join(rootDir, ".byulhook");
 
-  const useHusky = existsSync(path.join(rootDir, ".husky"));
-  const useLefthook = existsSync(lefthookConfigFile);
-  const useByulhook = existsSync(byulhookConfigFile);
+  const hookDirs = [gitHookDir, huskyHookDir, lefthookHookDir, byulhookHookDir];
 
-  let hookFile;
+  for (const dir of hookDirs) {
+    if (existsSync(dir)) {
+      const hookFile = path.join(dir, hookName);
+      let hookContent = '';
 
-  if (useHusky) {
-    hookFile = huskyHookFile;
-    const byulHookScript = `
-# byulFormat
-node ./node_modules/byul/dist/index.js "$1"
-# byulFormat
-`;
-    writeFileSync(hookFile, byulHookScript, { mode: 0o755 });
-  } else if (useLefthook) {
-    hookFile = lefthookConfigFile;
-    const lefthookConfig = readFileSync(lefthookConfigFile, "utf8");
-    const lefthookScript = `
-commit-msg:
-  commands:
-    byul:
-      run: "node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG"
-`;
-    if (!lefthookConfig.includes('node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG')) {
-      writeFileSync(lefthookConfigFile, lefthookScript, { flag: 'a' });
+      if (existsSync(hookFile)) {
+        hookContent = readFileSync(hookFile, 'utf8');
+      }
+
+      const byulCommand = 'node ./node_modules/byul/dist/index.js "$1"';
+
+      if (!hookContent.includes(byulCommand)) {
+        hookContent += `\n${byulCommand}\n`;
+        writeFileSync(hookFile, hookContent, { mode: 0o755 });
+      }
+
+      if (process.platform === "win32") {
+        execSync(`attrib -r +a "${hookFile}"`);
+      } else {
+        execSync(`chmod +x "${hookFile}"`);
+      }
     }
-  } else if (useByulhook) {
-    hookFile = byulhookConfigFile;
-    const byulhookConfig = readFileSync(byulhookConfigFile, "utf8");
-    const byulhookScript = `
-commit-msg:
-  commands:
-    byul:
-      run: "node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG"
-`;
-    if (!byulhookConfig.includes('node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG')) {
-      writeFileSync(byulhookConfigFile, byulhookScript, { flag: 'a' });
-    }
-  } else {
-    hookFile = gitHookFile;
-    const byulHookScript = `
-# byulFormat
-COMMIT_MSG_FILE="$1"
-BRANCH_NAME=$(git symbolic-ref --short HEAD)
-node .node_modules/byul/dist/index.js "$COMMIT_MSG_FILE" "$BRANCH_NAME"
-# byulFormat
-`;
-
-    writeFileSync(hookFile, `#!/bin/sh\n\n${byulHookScript}\n`, { mode: 0o755 });
-  }
-
-
-  if (process.platform === "win32") {
-    execSync(`attrib -r +a "${hookFile}"`);
-  } else {
-    execSync(`chmod +x "${hookFile}"`);
   }
 }
 
@@ -104,7 +71,25 @@ function setupByulConfig() {
   const byulConfigPath = join(projectRoot, "byul.config.json");
 
   const defaultConfig = {
-    byulFormat: "{type}: {commitMessage} (#{issueNumber})",
+    "language": "한국어",
+    "model": "gpt-4o-mini",
+    "_comment_language": "English, 한국어, 日本語, 中文, Español, Français, Deutsch...",
+    "_comment_model": "gpt-3.5-turbo, gpt-4, gpt-4-32k, gpt-4o, gpt-4o-mini, gpt-o1-mini, gpt-o1-preview...",
+    "commitTypes": {
+      "feat": "Feature (new feature)",
+      "fix": "Bug fix (bug fix)",
+      "refactor": "Refactoring",
+      "style": "Code style (code formatting, whitespace, comments, semicolons: no changes to business logic)",
+      "docs": "Documentation (add, modify, delete docs, README)",
+      "test": "Tests (add, modify, delete test code: no changes to business logic)",
+      "settings": "Project settings",
+      "chore": "Miscellaneous changes like package manager mods, e.g., .gitignore",
+      "init": "Initial creation",
+      "rename": "Rename or move files/folders only",
+      "remove": "Delete files only",
+      "design": "UI/UX design changes like CSS",
+      "release": "Deployment or release, e.g., release/login-123"
+    }
   };
 
   writeConfigFile(byulConfigPath, defaultConfig);

@@ -1,7 +1,7 @@
 {
   "name": "byul",
-  "version": "1.3.1",
-  "description": "simple commit message formater",
+  "version": "2.0.0",
+  "description": "Write commit messages in 1 second",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
@@ -12,12 +12,11 @@
   },
   "keywords": [
     "byulhook",
-    "huksy",
-    "lefthook",
-    "format",
-    "love1ace",
+    "AI",
+    "ChatGPT",
+    "git",
     "commit",
-    "byul"
+    "love1ace"
   ],
   "bugs": {
     "url": "https://github.com/byulhook/byul/issues"
@@ -28,7 +27,10 @@
     "LICENSE"
   ],
   "homepage": "https://github.com/byulhook/byul#readme",
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.62.1"
+  },
   "devDependencies": {
     "@types/node": "^22.4.0",
     "typescript": "^5.5.4"

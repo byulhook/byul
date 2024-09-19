@@ -13,7 +13,7 @@
 #     lint:
 #       run: 'npm run lint'
 
-commit-msg:
-  commands:
-    byul:
-      run: "node dist/index.js .git/COMMIT_EDITMSG"
+# commit-msg:
+#   commands:
+#     byul:
+#       run: "node dist/index.js .git/COMMIT_EDITMSG"
