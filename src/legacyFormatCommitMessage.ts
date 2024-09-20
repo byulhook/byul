@@ -123,16 +123,15 @@ async function formatTitle(
   let format =
     userConfig?.byulFormat || "{type}: {commitMessage} #{issueNumber}";
 
-  console.log("commitMode: ", commitMode);
-  console.log("!isValidNumber(issueNumber))", !isValidNumber(issueNumber));
-  console.log("issueNumber", issueNumber);
-  // TODO: commitMode가 message이고, issueNuber가 없는 경우 이슈 번호를 추출하지 않도록 수정.
   if (commitMode === "message" && !isValidNumber(issueNumber)) {
-    console.log("format", format);
-    console.log("issueNumber", issueNumber);
-    console.log("!issueNumber", !issueNumber);
-    format = format.replace(" #{issueNumber}", "");
-    console.log("format", format);
+    console.log(
+      "Commit mode is 'message' and issue number is not valid. Removing issue number placeholders."
+    );
+
+    const regex = /(\[?#\{issueNumber\}\]?|\(#\{issueNumber\}\))/g;
+    format = format.replace(regex, "");
+
+    format = format.replace(/\s+/g, " ").trim();
   }
 
   format = format
