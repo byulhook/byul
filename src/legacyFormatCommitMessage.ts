@@ -63,7 +63,6 @@ async function legacyFormatCommitMessage(): Promise<void> {
         }
 
         const formattedTitle = await formatTitle(branchName, title, mode);
-
         const formattedLines = [formattedTitle, ...lines.slice(bodyStartIndex)];
 
         formattedMessage = formattedLines.join("\n");
