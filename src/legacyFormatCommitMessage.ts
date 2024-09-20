@@ -50,15 +50,33 @@ async function legacyFormatCommitMessage(): Promise<void> {
     {
       text: "Formatting commit message",
       run: async () => {
-        const lines = ["", ...commitMessage.split("\n")];
-        const title = lines[0] || "";
-        const body = lines.slice(1).join("\n");
+        const lines = commitMessage.split("\n");
+        let title = "";
+        let bodyStartIndex = 0;
+
+        // Find the first non-empty, non-comment line as the title
+        for (let i = 0; i < lines.length; i++) {
+          if (!lines[i].startsWith("#") && lines[i].trim() !== "") {
+            title = lines[i];
+            bodyStartIndex = i + 1;
+            break;
+          }
+        }
+
+        // Format the title
         const formattedTitle = await formatTitle(
           branchName,
           title,
           commitMode.mode
         );
-        formattedMessage = [formattedTitle, body].filter(Boolean).join("\n\n");
+
+        // Reconstruct the message
+        const formattedLines = [
+          formattedTitle,
+          ...lines.slice(bodyStartIndex), // Keep all lines after the title as they are
+        ];
+
+        formattedMessage = formattedLines.join("\n");
       },
     },
     {
