@@ -2,6 +2,8 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { execSync, spawnSync } from "child_process";
 import { Taskl, Task, TasklOptions } from "taskl";
+import { detectCommitMode } from "./detectCommitMode.js";
+import { isValidNumber } from "./isValidNumber.js";
 
 const ANSI_COLORS = {
   cyan: "\x1b[36m",
@@ -18,6 +20,8 @@ async function legacyFormatCommitMessage(): Promise<void> {
   let commitMsgFile: string;
   let commitMessage: string;
   let formattedMessage: string;
+
+  const commitMode = detectCommitMode();
 
   const tasks: Task[] = [
     {
@@ -46,10 +50,14 @@ async function legacyFormatCommitMessage(): Promise<void> {
     {
       text: "Formatting commit message",
       run: async () => {
-        const lines = ["", ...commitMessage.split("\n")];
+        const lines = commitMessage.split("\n");
         const title = lines[0] || "";
         const body = lines.slice(1).join("\n");
-        const formattedTitle = await formatTitle(branchName, title);
+        const formattedTitle = await formatTitle(
+          branchName,
+          title,
+          commitMode.mode
+        );
         formattedMessage = [formattedTitle, body].filter(Boolean).join("\n\n");
       },
     },
@@ -64,17 +72,26 @@ async function legacyFormatCommitMessage(): Promise<void> {
   const options: TasklOptions = {
     tasks: tasks,
     startMessage: "🔄 Starting byul - Developed by love1ace",
-    successMessage:
-      "byul has formatted the commit message and opened the editor for final editing.",
+    successMessage: "byul has formatted the commit message.",
     failedMessage:
       "byul encountered an error while processing the commit message.",
   };
 
-  const taskl = new Taskl(options);
-  await taskl.runTasks();
+  if (commitMode.mode === "message") {
+    console.log(
+      `${ANSI_COLORS.cyan}ℹ️ Commit message mode detected. Formatting will be applied after message is written.${ANSI_COLORS.reset}`
+    );
+    await new Taskl(options).runTasks();
+  } else {
+    await new Taskl(options).runTasks();
+  }
 }
 
-async function formatTitle(branchName: string, title: string): Promise<string> {
+async function formatTitle(
+  branchName: string,
+  title: string,
+  commitMode?: String
+): Promise<string> {
   let branchType = "";
   let issueNumber = "";
 
@@ -105,6 +122,18 @@ async function formatTitle(branchName: string, title: string): Promise<string> {
 
   let format =
     userConfig?.byulFormat || "{type}: {commitMessage} #{issueNumber}";
+
+  console.log("commitMode: ", commitMode);
+  console.log("!isValidNumber(issueNumber))", !isValidNumber(issueNumber));
+  console.log("issueNumber", issueNumber);
+  // TODO: commitMode가 message이고, issueNuber가 없는 경우 이슈 번호를 추출하지 않도록 수정.
+  if (commitMode === "message" && !isValidNumber(issueNumber)) {
+    console.log("format", format);
+    console.log("issueNumber", issueNumber);
+    console.log("!issueNumber", !issueNumber);
+    format = format.replace(" #{issueNumber}", "");
+    console.log("format", format);
+  }
 
   format = format
     .replace("{type}", branchType)

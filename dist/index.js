@@ -103,7 +103,6 @@ async function generateCommitMessage(commitMsgFile) {
     if (!config.commitTypes) {
         console.warn(`${ANSI_COLORS.yellow}Warning: No commit types defined in byul.config.json file.${ANSI_COLORS.reset}`);
     }
-    // aiCommit이 undefined일경우 legacy format은 실행되지 않음.
     if (!Boolean((_a = config.aiCommit) !== null && _a !== void 0 ? _a : true)) {
         console.log("Using legacy format for commit message generation.");
         await legacyFormatCommitMessage();
