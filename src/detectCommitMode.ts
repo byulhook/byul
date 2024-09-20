@@ -40,7 +40,6 @@ function detectCommitMode(): CommitInfo {
   const modeHandler = commitModes[commitSource] || commitModes.default;
   let { mode, isMessageProvided } = modeHandler(commitSource, commitSHA);
 
-  // 파일 내용 확인 (message, merge, squash가 아닌 경우)
   if (!isMessageProvided) {
     const commitMsg = fs.readFileSync(commitMsgFile, "utf-8");
     const nonCommentLines = commitMsg

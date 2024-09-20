@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { Taskl, Task, TasklOptions } from "taskl";
 import { legacyFormatCommitMessage } from "./legacyFormatCommitMessage.js";
+import { detectCommitMode } from "./detectCommitMode.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -135,6 +136,14 @@ async function generateCommitMessage(commitMsgFile: string): Promise<void> {
   let changesSummary: string;
   let issueNumber: string;
   let commitMessage: string;
+
+  const { mode } = detectCommitMode();
+  if (mode === "amend" || mode === "squash" || mode === "merge") {
+    console.log(
+      "Skipping commit message generation for amend, squash, or merge commits."
+    );
+    return;
+  }
 
   config = getByulConfig();
 

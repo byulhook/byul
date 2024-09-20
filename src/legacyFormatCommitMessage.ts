@@ -21,7 +21,7 @@ async function legacyFormatCommitMessage(): Promise<void> {
   let commitMessage: string;
   let formattedMessage: string;
 
-  const commitMode = detectCommitMode();
+  const { mode } = detectCommitMode();
 
   const tasks: Task[] = [
     {
@@ -54,7 +54,6 @@ async function legacyFormatCommitMessage(): Promise<void> {
         let title = "";
         let bodyStartIndex = 0;
 
-        // Find the first non-empty, non-comment line as the title
         for (let i = 0; i < lines.length; i++) {
           if (!lines[i].startsWith("#") && lines[i].trim() !== "") {
             title = lines[i];
@@ -63,18 +62,9 @@ async function legacyFormatCommitMessage(): Promise<void> {
           }
         }
 
-        // Format the title
-        const formattedTitle = await formatTitle(
-          branchName,
-          title,
-          commitMode.mode
-        );
+        const formattedTitle = await formatTitle(branchName, title, mode);
 
-        // Reconstruct the message
-        const formattedLines = [
-          formattedTitle,
-          ...lines.slice(bodyStartIndex), // Keep all lines after the title as they are
-        ];
+        const formattedLines = [formattedTitle, ...lines.slice(bodyStartIndex)];
 
         formattedMessage = formattedLines.join("\n");
       },
@@ -95,7 +85,7 @@ async function legacyFormatCommitMessage(): Promise<void> {
       "byul encountered an error while processing the commit message.",
   };
 
-  if (commitMode.mode === "message") {
+  if (mode === "message") {
     console.log(
       `${ANSI_COLORS.cyan}ℹ️ Commit message mode detected. Formatting will be applied after message is written.${ANSI_COLORS.reset}`
     );

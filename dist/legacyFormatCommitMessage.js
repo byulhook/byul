@@ -49,7 +49,6 @@ async function legacyFormatCommitMessage() {
                 const lines = commitMessage.split("\n");
                 let title = "";
                 let bodyStartIndex = 0;
-                // Find the first non-empty, non-comment line as the title
                 for (let i = 0; i < lines.length; i++) {
                     if (!lines[i].startsWith("#") && lines[i].trim() !== "") {
                         title = lines[i];
@@ -57,16 +56,9 @@ async function legacyFormatCommitMessage() {
                         break;
                     }
                 }
-                // Format the title
                 const formattedTitle = await formatTitle(branchName, title, commitMode.mode);
-                // Reconstruct the message
-                const formattedLines = [
-                    formattedTitle,
-                    ...lines.slice(bodyStartIndex), // Keep all lines after the title as they are
-                ];
+                const formattedLines = [formattedTitle, ...lines.slice(bodyStartIndex)];
                 formattedMessage = formattedLines.join("\n");
-                console.log("Formatted commit message:");
-                console.log(formattedMessage);
             },
         },
         {
