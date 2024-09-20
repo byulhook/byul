@@ -29,7 +29,8 @@
   "homepage": "https://github.com/byulhook/byul#readme",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "openai": "^4.62.1"
+    "openai": "^4.62.1",
+    "taskl": "^1.0.2"
   },
   "devDependencies": {
     "@types/node": "^22.4.0",

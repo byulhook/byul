@@ -6,6 +6,7 @@ import { spawn } from 'child_process';
 import OpenAI from 'openai';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { Taskl } from 'taskl';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
@@ -90,37 +91,54 @@ async function validateCommitMessage(commitMessage, issueNumber, branchName, con
     return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || '';
 }
 async function generateCommitMessage(commitMsgFile) {
-    const startTime = Date.now();
-    console.log();
-    console.log(`${ANSI_COLORS.cyan}🔄 Starting byul - Developed by love1ace${ANSI_COLORS.reset}`);
-    try {
-        const config = getByulConfig();
-        console.log(`${ANSI_COLORS.gray}[1/3] 🔍 Analyzing staged changes...${ANSI_COLORS.reset}`);
-        const diff = await getDiffStream(':(exclude)node_modules');
-        if (!diff) {
-            console.log(`${ANSI_COLORS.yellow}⚠️ No staged changes found. Aborting commit message generation.${ANSI_COLORS.reset}`);
-            return;
+    let config;
+    let changesSummary;
+    let issueNumber;
+    let commitMessage;
+    const tasks = [
+        {
+            text: 'Loading configuration',
+            run: async () => {
+                config = getByulConfig();
+            }
+        },
+        {
+            text: 'Analyzing staged changes',
+            run: async () => {
+                const diff = await getDiffStream(':(exclude)node_modules');
+                changesSummary = await analyzeChanges(diff);
+            }
+        },
+        {
+            text: 'Extracting issue number',
+            run: async () => {
+                const branchName = await getBranchName();
+                issueNumber = await extractIssueNumber(branchName);
+            }
+        },
+        {
+            text: 'Generating commit message',
+            run: async () => {
+                commitMessage = await generateInitialCommitMessage(changesSummary, issueNumber, config);
+            }
+        },
+        {
+            text: 'Updating commit message file',
+            run: async () => {
+                const existingMessage = fs.readFileSync(commitMsgFile, 'utf8');
+                const combinedMessage = `${commitMessage}\n\n# byul generated commit message. Modify as needed.\n\n${existingMessage}`;
+                fs.writeFileSync(commitMsgFile, combinedMessage, 'utf8');
+            }
         }
-        const changesSummary = await analyzeChanges(diff);
-        console.log(`${ANSI_COLORS.gray}[2/3] 🔢 Extracting issue number...${ANSI_COLORS.reset}`);
-        const branchName = await getBranchName();
-        const issueNumber = await extractIssueNumber(branchName);
-        console.log(`${ANSI_COLORS.gray}[3/3] 🤖 Generating commit message...${ANSI_COLORS.reset}`);
-        const commitMessage = await generateInitialCommitMessage(changesSummary, issueNumber, config);
-        // Final validation step commented out
-        // console.log(`${ANSI_COLORS.gray}[4/4] ✅ Validating commit message...${ANSI_COLORS.reset}`);
-        // const finalCommitMessage = await validateCommitMessage(commitMessage, issueNumber, branchName, config);
-        console.log(`${ANSI_COLORS.gray}📝 Updating commit message file...${ANSI_COLORS.reset}`);
-        const existingMessage = fs.readFileSync(commitMsgFile, 'utf8');
-        const combinedMessage = `${commitMessage}\n\n# byul generated commit message. Modify as needed.\n\n${existingMessage}`;
-        fs.writeFileSync(commitMsgFile, combinedMessage, 'utf8');
-        console.log(`${ANSI_COLORS.green}Success!${ANSI_COLORS.reset} byul has generated the commit message.`);
-    }
-    catch (error) {
-        console.error(`${ANSI_COLORS.red}Error generating commit message:${ANSI_COLORS.reset}`, error);
-    }
-    console.log(`${ANSI_COLORS.blue}✨ Done in ${(Date.now() - startTime) / 1000}s.${ANSI_COLORS.reset}`);
-    console.log();
+    ];
+    const options = {
+        tasks: tasks,
+        startMessage: '🔄 Starting byul - Developed by love1ace',
+        successMessage: 'byul has generated the commit message.',
+        failedMessage: 'byul encountered an error while generating the commit message.'
+    };
+    const taskl = new Taskl(options);
+    await taskl.runTasks();
 }
 function getDiffStream(excludePattern = '') {
     return new Promise((resolve, reject) => {

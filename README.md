@@ -120,7 +120,7 @@ This flexibility allows you to define a format that best suits your project's ne
 
 ## Contributing
 
-We welcome contributions to **byulhook**! Whether it's reporting a bug, suggesting an enhancement, or submitting a pull request, your input is valued.
+We welcome contributions to **byul**! Whether it's reporting a bug, suggesting an enhancement, or submitting a pull request, your input is valued.
 
 ## License
 
