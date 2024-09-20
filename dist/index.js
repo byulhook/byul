@@ -1,12 +1,13 @@
 #!/usr/bin/env node
-import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
-import { spawn } from 'child_process';
-import OpenAI from 'openai';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { Taskl } from 'taskl';
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { spawn } from "child_process";
+import OpenAI from "openai";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { Taskl } from "taskl";
+import { legacyFormatCommitMessage } from "./legacyFormatCommitMessage.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
@@ -14,143 +15,150 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const ANSI_COLORS = {
-    cyan: '\x1b[36m',
-    gray: '\x1b[90m',
-    green: '\x1b[32m',
-    red: '\x1b[31m',
-    blue: '\x1b[34m',
-    yellow: '\x1b[33m',
-    reset: '\x1b[0m'
+    cyan: "\x1b[36m",
+    gray: "\x1b[90m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    blue: "\x1b[34m",
+    yellow: "\x1b[33m",
+    reset: "\x1b[0m",
 };
 function getByulConfig() {
     try {
-        const configPath = path.join(process.cwd(), 'byul.config.json');
-        const configFile = fs.readFileSync(configPath, 'utf8');
+        const configPath = path.join(process.cwd(), "byul.config.json");
+        const configFile = fs.readFileSync(configPath, "utf8");
         return JSON.parse(configFile);
     }
     catch (error) {
         console.warn(`${ANSI_COLORS.yellow}Warning: Could not read byul.config.json file. Using default settings.${ANSI_COLORS.reset}`);
-        return { language: 'English', model: 'gpt-4o-mini' };
+        return { language: "English", model: "gpt-4o-mini" };
     }
 }
 async function analyzeChanges(diff) {
     var _a, _b, _c;
-    const prompt = fs.readFileSync(path.join(__dirname, '..', 'dist/analyze_changes.txt'), 'utf8');
+    const prompt = fs.readFileSync(path.join(__dirname, "..", "dist/analyze_changes.txt"), "utf8");
     const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt.replace('${diff}', diff) }],
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt.replace("${diff}", diff) }],
         max_tokens: 500,
         temperature: 0.7,
     });
-    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || '';
+    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || "";
 }
 async function extractIssueNumber(branchName) {
     var _a, _b, _c;
-    const prompt = fs.readFileSync(path.join(__dirname, '..', 'dist/extract_issue_number.txt'), 'utf8');
+    const prompt = fs.readFileSync(path.join(__dirname, "..", "dist/extract_issue_number.txt"), "utf8");
     const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt.replace('${branchName}', branchName) }],
+        model: "gpt-4o-mini",
+        messages: [
+            { role: "user", content: prompt.replace("${branchName}", branchName) },
+        ],
         max_tokens: 50,
         temperature: 0.3,
     });
-    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || '';
+    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || "";
 }
 async function generateInitialCommitMessage(summary, issueNumber, config) {
     var _a, _b, _c;
-    const prompt = fs.readFileSync(path.join(__dirname, '..', 'dist/generate_commit_msg.txt'), 'utf8');
+    const prompt = fs.readFileSync(path.join(__dirname, "..", "dist/generate_commit_msg.txt"), "utf8");
     const commitTypesString = Object.entries(config.commitTypes || {})
         .map(([type, description]) => `- ${type}: ${description}`)
-        .join('\n');
+        .join("\n");
     const filledPrompt = prompt
-        .replace('${summary}', summary)
-        .replace('${issueNumber}', issueNumber)
-        .replace('${language}', config.language)
-        .replace('${commitTypes}', commitTypesString);
+        .replace("${summary}", summary)
+        .replace("${issueNumber}", issueNumber)
+        .replace("${language}", config.language)
+        .replace("${commitTypes}", commitTypesString);
     const response = await openai.chat.completions.create({
         model: config.model,
-        messages: [{ role: 'user', content: filledPrompt }],
+        messages: [{ role: "user", content: filledPrompt }],
         max_tokens: 200,
         temperature: 0.6,
     });
-    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || '';
+    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || "";
 }
 async function validateCommitMessage(commitMessage, issueNumber, branchName, config) {
     var _a, _b, _c;
-    const prompt = fs.readFileSync(path.join(__dirname, '..', 'dist/validate_commit_msg.txt'), 'utf8');
+    const prompt = fs.readFileSync(path.join(__dirname, "..", "dist/validate_commit_msg.txt"), "utf8");
     const filledPrompt = prompt
-        .replace('${commitMessage}', commitMessage)
-        .replace('${issueNumber}', issueNumber)
-        .replace('${branchName}', branchName)
-        .replace('${language}', config.language);
+        .replace("${commitMessage}", commitMessage)
+        .replace("${issueNumber}", issueNumber)
+        .replace("${branchName}", branchName)
+        .replace("${language}", config.language);
     const response = await openai.chat.completions.create({
         model: config.model,
-        messages: [{ role: 'user', content: filledPrompt }],
+        messages: [{ role: "user", content: filledPrompt }],
         max_tokens: 200,
         temperature: 0.3,
     });
-    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || '';
+    return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || "";
 }
 async function generateCommitMessage(commitMsgFile) {
+    var _a;
     let config;
     let changesSummary;
     let issueNumber;
     let commitMessage;
+    config = getByulConfig();
+    if (!config.commitTypes) {
+        console.warn(`${ANSI_COLORS.yellow}Warning: No commit types defined in byul.config.json file.${ANSI_COLORS.reset}`);
+    }
+    // aiCommit이 undefined일경우 legacy format은 실행되지 않음.
+    if (!Boolean((_a = config.aiCommit) !== null && _a !== void 0 ? _a : true)) {
+        console.log("Using legacy format for commit message generation.");
+        await legacyFormatCommitMessage();
+        return;
+    }
     const tasks = [
         {
-            text: 'Loading configuration',
+            text: "Analyzing staged changes",
             run: async () => {
-                config = getByulConfig();
-            }
-        },
-        {
-            text: 'Analyzing staged changes',
-            run: async () => {
-                const diff = await getDiffStream(':(exclude)node_modules');
+                const diff = await getDiffStream(":(exclude)node_modules");
                 changesSummary = await analyzeChanges(diff);
-            }
+            },
         },
         {
-            text: 'Extracting issue number',
+            text: "Extracting issue number",
             run: async () => {
                 const branchName = await getBranchName();
                 issueNumber = await extractIssueNumber(branchName);
-            }
+            },
         },
         {
-            text: 'Generating commit message',
+            text: "Generating commit message",
             run: async () => {
                 commitMessage = await generateInitialCommitMessage(changesSummary, issueNumber, config);
-            }
+            },
         },
         {
-            text: 'Updating commit message file',
+            text: "Updating commit message file",
             run: async () => {
-                const existingMessage = fs.readFileSync(commitMsgFile, 'utf8');
+                const existingMessage = fs.readFileSync(commitMsgFile, "utf8");
                 const combinedMessage = `${commitMessage}\n\n# byul generated commit message. Modify as needed.\n\n${existingMessage}`;
-                fs.writeFileSync(commitMsgFile, combinedMessage, 'utf8');
-            }
-        }
+                fs.writeFileSync(commitMsgFile, combinedMessage, "utf8");
+            },
+        },
     ];
     const options = {
         tasks: tasks,
-        startMessage: '🔄 Starting byul - Developed by love1ace',
-        successMessage: 'byul has generated the commit message.',
-        failedMessage: 'byul encountered an error while generating the commit message.'
+        startMessage: "🔄 Starting byul - Developed by love1ace",
+        successMessage: "byul has generated the commit message.",
+        failedMessage: "byul encountered an error while generating the commit message.",
     };
     const taskl = new Taskl(options);
     await taskl.runTasks();
 }
-function getDiffStream(excludePattern = '') {
+function getDiffStream(excludePattern = "") {
     return new Promise((resolve, reject) => {
-        const git = spawn('git', ['diff', '--cached', excludePattern]);
-        let diff = '';
-        git.stdout.on('data', (data) => {
+        const git = spawn("git", ["diff", "--cached", excludePattern]);
+        let diff = "";
+        git.stdout.on("data", (data) => {
             diff += data.toString();
         });
-        git.stderr.on('data', (data) => {
+        git.stderr.on("data", (data) => {
             console.error(`Git error: ${data}`);
         });
-        git.on('close', (code) => {
+        git.on("close", (code) => {
             if (code === 0) {
                 resolve(diff);
             }
@@ -162,12 +170,12 @@ function getDiffStream(excludePattern = '') {
 }
 function getBranchName() {
     return new Promise((resolve, reject) => {
-        const git = spawn('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
-        let branchName = '';
-        git.stdout.on('data', (data) => {
+        const git = spawn("git", ["rev-parse", "--abbrev-ref", "HEAD"]);
+        let branchName = "";
+        git.stdout.on("data", (data) => {
             branchName += data.toString().trim();
         });
-        git.on('close', (code) => {
+        git.on("close", (code) => {
             if (code === 0) {
                 resolve(branchName);
             }
