@@ -1,6 +1,6 @@
 {
   "language": "한국어",
-  "aiCommit": true,
+  "aiCommit": false,
   "model": "gpt-4o-mini",
   "byulFormat": "{type}: {commitMessage} (#{issueNumber})",
   "_comment_language": "English, 한국어, 日本語, 中文, Español, Français, Deutsch...",

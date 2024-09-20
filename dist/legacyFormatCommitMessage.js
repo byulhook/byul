@@ -46,7 +46,7 @@ async function legacyFormatCommitMessage() {
         {
             text: "Formatting commit message",
             run: async () => {
-                const lines = commitMessage.split("\n");
+                const lines = ["", ...commitMessage.split("\n")];
                 const title = lines[0] || "";
                 const body = lines.slice(1).join("\n");
                 const formattedTitle = await formatTitle(branchName, title, commitMode.mode);
