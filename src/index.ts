@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
+import { detectCommitMode } from "./detectCommitMode.js";
 
 const ANSI_COLORS = {
   cyan: "\x1b[36m",
@@ -13,7 +14,16 @@ const ANSI_COLORS = {
 };
 
 async function formatCommitMessage(): Promise<void> {
+  const { mode } = detectCommitMode();
+
+  if (mode === "squash" || mode === "amend") {
+    console.log(
+      `${ANSI_COLORS.red} byul does not work when 'SQUASH' or 'AMEND'...`
+    );
+    return;
+  }
   const startTime = Date.now();
+
   console.log();
   console.log(
     `${ANSI_COLORS.cyan}🔄 Starting byul - Developed by love1ace${ANSI_COLORS.reset}`
