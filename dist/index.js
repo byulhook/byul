@@ -14,7 +14,9 @@ const ANSI_COLORS = {
 async function formatCommitMessage() {
     const { mode } = detectCommitMode();
     if (mode === "squash" || mode === "amend") {
-        console.log(`${ANSI_COLORS.red} byul does not work when 'SQUASH' or 'AMEND'...`);
+        console.log();
+        console.log(`${ANSI_COLORS.red} byul does not work when 'SQUASH' or 'AMEND'...${ANSI_COLORS.reset}`);
+        console.log();
         return;
     }
     const startTime = Date.now();
