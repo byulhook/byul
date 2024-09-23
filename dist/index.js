@@ -34,19 +34,24 @@ async function formatCommitMessage() {
         }
         console.log(`${ANSI_COLORS.gray}[2/2] 📝 Formatting commit message...${ANSI_COLORS.reset}`);
         const commitMessage = readFileSync(commitMsgFile, "utf8");
-        const lines = commitMessage
-            .split("\n")
-            .filter((line) => line.trim() !== "" && !line.trim().startsWith("#"));
-        if (lines.length === 0) {
+        const lines = commitMessage.split("\n");
+        let title = "";
+        let bodyStartIndex = 0;
+        if (lines.length === 0 && mode === "message") {
             console.error(`${ANSI_COLORS.red}Error: The commit message is empty after removing comments and empty lines.${ANSI_COLORS.reset}`);
             return;
         }
-        const title = lines[0];
-        const body = lines.slice(1).join("\n");
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].trim() !== "" && !lines[i].trim().startsWith("#")) {
+                title = lines[i];
+                bodyStartIndex = i + 1;
+            }
+        }
         const formattedTitle = await formatTitle(branchName, title);
-        const formattedMessage = [formattedTitle, body]
-            .filter(Boolean)
-            .join("\n\n");
+        const formattedMessage = [
+            formattedTitle,
+            ...lines.slice(bodyStartIndex),
+        ].join("\n");
         writeFileSync(commitMsgFile, formattedMessage);
         console.log(`${ANSI_COLORS.green}Success!${ANSI_COLORS.reset} byul has formatted the commit message.`);
     }
