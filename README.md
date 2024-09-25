@@ -83,33 +83,6 @@ To resolve this, manually run the setup script:
 node node_modules/byul/dist/setup.mjs
 ```
 
-Alternatively, you can manually create the `byul.config.json` file and add the following code:
-
-```json
-{
-  "byulFormat": "{type}: {commitMessage} (#{issueNumber})",
-  "AI": true,
-  "language": "English",
-  "model": "gpt-4o-mini",
-
-  "commitTypes": {
-    "feat": "Feature (new feature)",
-    "fix": "Bug fix (bug fix)",
-    "refactor": "Refactoring",
-    "style": "Code style (code formatting, whitespace, comments, semicolons: no changes to business logic)",
-    "docs": "Documentation (add, modify, delete docs, README)",
-    "test": "Tests (add, modify, delete test code: no changes to business logic)",
-    "settings": "Project settings",
-    "chore": "Miscellaneous changes like package manager mods, e.g., .gitignore",
-    "init": "Initial creation",
-    "rename": "Rename or move files/folders only",
-    "remove": "Delete files only",
-    "design": "UI/UX design changes like CSS",
-    "release": "Deployment or release, e.g., release/login-123"
-  }
-}
-```
-
 ## Usage
 
 The `byul.config.json` file must be placed in the root directory of your project.
@@ -216,6 +189,7 @@ The commit message will be formatted as:
 
 This flexibility allows you to define a format that best suits your project's needs.
 
+
 ## FAQ
 
 **Q. The commit message is not automatically formatted.**
@@ -229,6 +203,20 @@ This flexibility allows you to define a format that best suits your project's ne
 **Q. Which model should I use?**
 
 **A.** Any ChatGPT model can be used, but we recommend using the `gpt-4o-mini` model.
+
+**Q. The project path has changed, and byul is no longer working.**
+
+**A.** If the project path changes, byul may stop functioning correctly. To resolve this, delete the `.git/hooks/prepare-commit-msg` file and run the `setup.mjs` script again:
+
+```bash
+node node_modules/byul/dist/setup.mjs
+```
+
+If you are using Husky, delete the `.husky/_/prepare-commit-msg` file and run the `setup.mjs` script again:
+
+```bash
+node node_modules/byul/dist/setup.mjs
+```
 
 ## Contributing
 
