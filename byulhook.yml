@@ -16,4 +16,4 @@
 # commit-msg:
 #   commands:
 #     byul:
-#       run: "node ./node_modules/byul/dist/index.js .git/COMMIT_EDITMSG"
+#       run: "node dist/index.js .git/COMMIT_EDITMSG"

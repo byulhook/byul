@@ -1,0 +1,36 @@
+name: byul Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 저장소 체크아웃
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      # 2. Node.js 설치 (원하는 Node 버전을 설정 가능)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # 3. npm 인증 설정 (NPM_TOKEN을 이용해 자동 로그인)
+      - name: Authenticate to npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      # 4. npm 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 5. npm publish 실행
+      - name: Publish package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
