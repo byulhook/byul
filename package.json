@@ -1,6 +1,6 @@
 {
   "name": "byul",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Write commit messages in 3 second",
   "main": "dist/index.js",
   "license": "MIT",
