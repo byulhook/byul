@@ -230,20 +230,6 @@ git commit -m "Add login logic"
 
 **A.** 모든 ChatGPT 모델을 사용할 수 있지만, `gpt-4o-mini` 모델을 사용하는 것을 권장합니다.
 
-**Q. 프로젝트 경로가 변경되어 byul이 작동하지 않습니다.**
-
-**A.** 프로젝트 경로가 변경되면 byul이 제대로 작동하지 않을 수 있습니다. 이를 해결하려면 `.git/hooks/prepare-commit-msg` 파일을 삭제하고 `setup.mjs` 스크립트를 다시 실행하세요:
-
-```bash
-node node_modules/byul/dist/setup.mjs
-```
-
-허스키(Husky)를 사용 중이라면, `.husky/_/prepare-commit-msg` 파일을 삭제하고 `setup.mjs` 스크립트를 다시 실행하세요:
-
-```bash
-node node_modules/byul/dist/setup.mjs
-```
-
 ## Contributing
 
 **byul**에 기여해 주셔서 감사합니다! 버그를 보고하거나, 개선 사항을 제안하거나, 풀 리퀘스트를 제출하는 등, 여러분의 참여를 환영합니다.
