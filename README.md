@@ -204,20 +204,6 @@ This flexibility allows you to define a format that best suits your project's ne
 
 **A.** Any ChatGPT model can be used, but we recommend using the `gpt-4o-mini` model.
 
-**Q. The project path has changed, and byul is no longer working.**
-
-**A.** If the project path changes, byul may stop functioning correctly. To resolve this, delete the `.git/hooks/prepare-commit-msg` file and run the `setup.mjs` script again:
-
-```bash
-node node_modules/byul/dist/setup.mjs
-```
-
-If you are using Husky, delete the `.husky/_/prepare-commit-msg` file and run the `setup.mjs` script again:
-
-```bash
-node node_modules/byul/dist/setup.mjs
-```
-
 ## Contributing
 
 We welcome contributions to **byul**! Whether it's reporting a bug, suggesting an enhancement, or submitting a pull request, your input is valued.
