@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function findGitOrHuskyDir(startDir) {
+function findGitDir(startDir) {
   let currentDir = startDir;
 
   while (currentDir !== path.parse(currentDir).root) {
@@ -18,10 +18,45 @@ function findGitOrHuskyDir(startDir) {
   return null;
 }
 
-const rootDir = findGitOrHuskyDir(__dirname);
+const rootDir = findGitDir(__dirname);
 if (!rootDir) {
   console.error("Error: .git directory not found. Please run this script inside a Git repository.");
   process.exit(1);
+}
+
+function getHooksPath(gitDir) {
+  const configPath = path.join(gitDir, ".git", "config");
+  if (!existsSync(configPath)) {
+    return path.join(gitDir, ".git", "hooks");
+  }
+
+  const configContent = readFileSync(configPath, 'utf8');
+  const hooksPathMatch = configContent.match(/^\s*hooksPath\s*=\s*(.+)$/m);
+
+  if (hooksPathMatch) {
+    const hooksPath = hooksPathMatch[1].trim();
+    if (!path.isAbsolute(hooksPath)) {
+      return path.resolve(gitDir, hooksPath);
+    }
+    return hooksPath;
+  }
+
+  return path.join(gitDir, ".git", "hooks");
+}
+
+const gitHookDir = getHooksPath(rootDir);
+
+function isHuskyInstalled() {
+  try {
+    const packageJsonPath = path.join(rootDir, 'package.json');
+    if (!existsSync(packageJsonPath)) return false;
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const deps = packageJson.dependencies || {};
+    const devDeps = packageJson.devDependencies || {};
+    return 'husky' in deps || 'husky' in devDeps;
+  } catch {
+    return false;
+  }
 }
 
 function writeConfigFile(filePath, defaultConfig) {
@@ -43,28 +78,48 @@ function writeConfigFile(filePath, defaultConfig) {
 
 function setupCommitMsgHook() {
   const hookName = "prepare-commit-msg";
-  const gitHookDir = path.join(rootDir, ".git", "hooks");
   const hookFile = path.join(gitHookDir, hookName);
 
   try {
-    let existingHook = '';
-    if (existsSync(hookFile)) {
-      existingHook = readFileSync(hookFile, 'utf8');
-    }
+    if (isHuskyInstalled()) {
+      execSync(`npx husky add ${hookFile} 'node node_modules/byul/dist/index.js "$1" "$2" "$3"'`);
+    } else {
+      let existingHook = '';
+      if (existsSync(hookFile)) {
+        existingHook = readFileSync(hookFile, 'utf8');
+      }
 
-    const byulCommand = `node ${path.join(rootDir, 'node_modules', 'byul', 'dist', 'index.js')} "$1" "$2" "$3"`;
-    let newHookContent = '#!/bin/sh\n\n';
+      const shebang = '#!/bin/sh';
+      const byulHookCommand = `node node_modules/byul/dist/index.js "$1" "$2" "$3"`;
 
-    if (existingHook && !existingHook.includes(byulCommand)) {
-      newHookContent += existingHook + '\n';
-    }
+      let newHookContent = '';
 
-    newHookContent += byulCommand + '\n';
+      if (existingHook) {
+        const lines = existingHook.split('\n');
+        const hasShebang = lines[0].startsWith(shebang);
+        const hasByulCommand = existingHook.includes(byulHookCommand);
 
-    writeFileSync(hookFile, newHookContent, { mode: 0o755 });
+        if (!hasShebang) {
+          newHookContent += shebang + '\n';
+        } else {
+          newHookContent += lines[0] + '\n';
+        }
 
-    if (process.platform !== "win32") {
-      execSync(`chmod +x "${hookFile}"`);
+        const hookBody = lines.slice(hasShebang ? 1 : 0).join('\n');
+        newHookContent += hookBody.trim() ? hookBody + '\n' : '';
+
+        if (!hasByulCommand) {
+          newHookContent += '\n' + byulHookCommand + '\n';
+        }
+      } else {
+        newHookContent = `${shebang}\n\n${byulHookCommand}\n`;
+      }
+
+      writeFileSync(hookFile, newHookContent, { mode: 0o755 });
+
+      if (process.platform !== "win32") {
+        execSync(`chmod +x "${hookFile}"`);
+      }
     }
   } catch (error) {
     console.error(`Failed to set up the commit message hook: ${error.message}`);
@@ -78,12 +133,9 @@ function setupByulConfig() {
 
   const defaultConfig = {
     "byulFormat": "{type}: {commitMessage} (#{issueNumber})",
-  
     "AI": true,
-  
     "language": "English",
     "model": "gpt-4o-mini",
-
     "commitTypes": {
       "feat": "Feature (new feature)",
       "fix": "Bug fix (bug fix)",
@@ -99,7 +151,6 @@ function setupByulConfig() {
       "design": "UI/UX design changes like CSS",
       "release": "Deployment or release, e.g., release/login-123"
     }
-    
   };
 
   writeConfigFile(byulConfigPath, defaultConfig);
