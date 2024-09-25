@@ -73,19 +73,36 @@ function setupCommitMsgHook() {
 }
 
 function setupByulConfig() {
-  try {
-    const projectRoot = process.env.INIT_CWD || process.cwd();
-    const byulConfigPath = join(projectRoot, "byul.config.json");
+  const projectRoot = process.env.INIT_CWD || process.cwd();
+  const byulConfigPath = join(projectRoot, "byul.config.json");
 
-    const defaultConfig = {
-      byulFormat: "{type}: {commitMessage} (#{issueNumber})",
-    };
+  const defaultConfig = {
+    "byulFormat": "{type}: {commitMessage} (#{issueNumber})",
+  
+    "AI": true,
+  
+    "language": "English",
+    "model": "gpt-4o-mini",
 
-    writeConfigFile(byulConfigPath, defaultConfig);
-  } catch (error) {
-    console.error(`Failed to set up byul configuration: ${error.message}`);
-    process.exit(1);
-  }
+    "commitTypes": {
+      "feat": "Feature (new feature)",
+      "fix": "Bug fix (bug fix)",
+      "refactor": "Refactoring",
+      "style": "Code style (code formatting, whitespace, comments, semicolons: no changes to business logic)",
+      "docs": "Documentation (add, modify, delete docs, README)",
+      "test": "Tests (add, modify, delete test code: no changes to business logic)",
+      "settings": "Project settings",
+      "chore": "Miscellaneous changes like package manager mods, e.g., .gitignore",
+      "init": "Initial creation",
+      "rename": "Rename or move files/folders only",
+      "remove": "Delete files only",
+      "design": "UI/UX design changes like CSS",
+      "release": "Deployment or release, e.g., release/login-123"
+    }
+    
+  };
+
+  writeConfigFile(byulConfigPath, defaultConfig);
 }
 
 setupByulConfig();

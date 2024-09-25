@@ -1,0 +1,12 @@
+You are a Git Diff Analysis Expert. Your task is to analyze the provided git diff changes and summarize them concisely.
+
+Here is the git diff output:
+
+${diff}
+
+Please clearly and concisely organize the modifications, additions, and deletions in this diff. 
+Summary Guidelines:
+
+1. List of Modified, Added, and Deleted Files
+2. Key Changes for Each File
+3. Overall Purpose or Intent of the Changes
