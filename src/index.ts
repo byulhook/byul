@@ -17,7 +17,7 @@ const __dirname = dirname(__filename);
 dotenv.config();
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || "",
 });
 
 const ANSI_COLORS = {
@@ -215,7 +215,7 @@ function getDiffStream(excludePattern: string = ""): Promise<string> {
 
 function getBranchName(): Promise<string> {
   return new Promise((resolve, reject) => {
-    const git = spawn("git", ["rev-parse", "--abbrev-ref", "HEAD"]);
+    const git = spawn("git", ["symbolic-ref", "--short", "HEAD"]);
     let branchName = "";
 
     git.stdout.on("data", (data) => {
