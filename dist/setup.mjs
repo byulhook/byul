@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import { writeFileSync, existsSync, readFileSync } from 'fs';
-import path, { join } from 'path';
+import { writeFileSync, existsSync, readFileSync } from "fs";
+import path, { join } from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,7 +20,9 @@ function findGitDir(startDir) {
 
 const rootDir = findGitDir(__dirname);
 if (!rootDir) {
-  console.error("Error: .git directory not found. Please run this script inside a Git repository.");
+  console.error(
+    "Error: .git directory not found. Please run this script inside a Git repository."
+  );
   process.exit(1);
 }
 
@@ -30,7 +32,7 @@ function getHooksPath(gitDir) {
     return path.join(gitDir, ".git", "hooks");
   }
 
-  const configContent = readFileSync(configPath, 'utf8');
+  const configContent = readFileSync(configPath, "utf8");
   const hooksPathMatch = configContent.match(/^\s*hooksPath\s*=\s*(.+)$/m);
 
   if (hooksPathMatch) {
@@ -48,12 +50,12 @@ const gitHookDir = getHooksPath(rootDir);
 
 function isHuskyInstalled() {
   try {
-    const packageJsonPath = path.join(rootDir, 'package.json');
+    const packageJsonPath = path.join(rootDir, "package.json");
     if (!existsSync(packageJsonPath)) return false;
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
     const deps = packageJson.dependencies || {};
     const devDeps = packageJson.devDependencies || {};
-    return 'husky' in deps || 'husky' in devDeps;
+    return "husky" in deps || "husky" in devDeps;
   } catch {
     return false;
   }
@@ -62,16 +64,18 @@ function isHuskyInstalled() {
 function writeConfigFile(filePath, defaultConfig) {
   try {
     if (!existsSync(filePath)) {
-      writeFileSync(filePath, JSON.stringify(defaultConfig, null, 2), 'utf8');
+      writeFileSync(filePath, JSON.stringify(defaultConfig, null, 2), "utf8");
     } else {
       const configFile = readFileSync(filePath, "utf8");
       let config = configFile.trim() ? JSON.parse(configFile) : {};
 
       config = { ...defaultConfig, ...config };
-      writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
+      writeFileSync(filePath, JSON.stringify(config, null, 2), "utf8");
     }
   } catch (error) {
-    console.error(`Failed to write config file at ${filePath}: ${error.message}`);
+    console.error(
+      `Failed to write config file at ${filePath}: ${error.message}`
+    );
     process.exit(1);
   }
 }
@@ -82,34 +86,36 @@ function setupCommitMsgHook() {
 
   try {
     if (isHuskyInstalled()) {
-      execSync(`npx husky add ${hookFile} 'node node_modules/byul/dist/index.js "$1" "$2" "$3"'`);
+      execSync(
+        `echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > ${hookFile}`
+      );
     } else {
-      let existingHook = '';
+      let existingHook = "";
       if (existsSync(hookFile)) {
-        existingHook = readFileSync(hookFile, 'utf8');
+        existingHook = readFileSync(hookFile, "utf8");
       }
 
-      const shebang = '#!/bin/sh';
+      const shebang = "#!/bin/sh";
       const byulHookCommand = `node node_modules/byul/dist/index.js "$1" "$2" "$3"`;
 
-      let newHookContent = '';
+      let newHookContent = "";
 
       if (existingHook) {
-        const lines = existingHook.split('\n');
+        const lines = existingHook.split("\n");
         const hasShebang = lines[0].startsWith(shebang);
         const hasByulCommand = existingHook.includes(byulHookCommand);
 
         if (!hasShebang) {
-          newHookContent += shebang + '\n';
+          newHookContent += shebang + "\n";
         } else {
-          newHookContent += lines[0] + '\n';
+          newHookContent += lines[0] + "\n";
         }
 
-        const hookBody = lines.slice(hasShebang ? 1 : 0).join('\n');
-        newHookContent += hookBody.trim() ? hookBody + '\n' : '';
+        const hookBody = lines.slice(hasShebang ? 1 : 0).join("\n");
+        newHookContent += hookBody.trim() ? hookBody + "\n" : "";
 
         if (!hasByulCommand) {
-          newHookContent += '\n' + byulHookCommand + '\n';
+          newHookContent += "\n" + byulHookCommand + "\n";
         }
       } else {
         newHookContent = `${shebang}\n\n${byulHookCommand}\n`;
@@ -132,25 +138,27 @@ function setupByulConfig() {
   const byulConfigPath = join(projectRoot, "byul.config.json");
 
   const defaultConfig = {
-    "byulFormat": "{type}: {commitMessage} (#{issueNumber})",
-    "AI": true,
-    "language": "English",
-    "model": "gpt-4o-mini",
-    "commitTypes": {
-      "feat": "Feature (new feature)",
-      "fix": "Bug fix (bug fix)",
-      "refactor": "Refactoring",
-      "style": "Code style (code formatting, whitespace, comments, semicolons: no changes to business logic)",
-      "docs": "Documentation (add, modify, delete docs, README)",
-      "test": "Tests (add, modify, delete test code: no changes to business logic)",
-      "settings": "Project settings",
-      "chore": "Miscellaneous changes like package manager mods, e.g., .gitignore",
-      "init": "Initial creation",
-      "rename": "Rename or move files/folders only",
-      "remove": "Delete files only",
-      "design": "UI/UX design changes like CSS",
-      "release": "Deployment or release, e.g., release/login-123"
-    }
+    byulFormat: "{type}: {commitMessage} (#{issueNumber})",
+    AI: true,
+    language: "English",
+    model: "gpt-4o-mini",
+    commitTypes: {
+      feat: "Feature (new feature)",
+      fix: "Bug fix (bug fix)",
+      refactor: "Refactoring",
+      style:
+        "Code style (code formatting, whitespace, comments, semicolons: no changes to business logic)",
+      docs: "Documentation (add, modify, delete docs, README)",
+      test: "Tests (add, modify, delete test code: no changes to business logic)",
+      settings: "Project settings",
+      chore:
+        "Miscellaneous changes like package manager mods, e.g., .gitignore",
+      init: "Initial creation",
+      rename: "Rename or move files/folders only",
+      remove: "Delete files only",
+      design: "UI/UX design changes like CSS",
+      release: "Deployment or release, e.g., release/login-123",
+    },
   };
 
   writeConfigFile(byulConfigPath, defaultConfig);
