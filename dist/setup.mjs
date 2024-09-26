@@ -83,11 +83,10 @@ function writeConfigFile(filePath, defaultConfig) {
 function setupCommitMsgHook() {
   const hookName = "prepare-commit-msg";
   const hookFile = path.join(gitHookDir, hookName);
-
   try {
     if (isHuskyInstalled()) {
       execSync(
-        `echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > ${hookFile}`
+        `echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > .husky/${hookName}`
       );
     } else {
       let existingHook = "";

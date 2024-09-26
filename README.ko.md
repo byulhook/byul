@@ -12,38 +12,42 @@
 #### AI 모드 활성화
 
 1. **설치**:
-    ```bash
-    npm install byul
-    ```
+
+   ```bash
+   npm install byul
+   ```
 
 2. **.env 설정**:
-    ```bash
-    OPENAI_API_KEY=your_openai_api_key
-    ```
+
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
 3. **커밋 사용**:
-    ```bash
-    git commit
-    ```
+   ```bash
+   git commit
+   ```
 
 #### AI 모드 비활성화
 
 1. **설치**:
-    ```bash
-    npm install byul
-    ```
+
+   ```bash
+   npm install byul
+   ```
 
 2. **byul.config.json 설정**:
-    ```json
-    {
-        "AI": false
-    }
-    ```
+
+   ```json
+   {
+     "AI": false
+   }
+   ```
 
 3. **커밋 사용**:
-    ```bash
-    git commit -m "commit message"
-    ```
+   ```bash
+   git commit -m "commit message"
+   ```
 
 ## Installation
 
@@ -83,7 +87,9 @@ bun add byul
 node node_modules/byul/dist/setup.mjs
 ```
 
-또는, `byul.config.json` 파일을 수동으로 생성하고 다음 코드를 추가할 수 있습니다:
+husky를 사용하고 있다면 아래의 설정 스크립트를 실행하세요:
+
+`byul.config.json` 파일을 수동으로 생성하고 다음 코드를 추가할 수 있습니다:
 
 ```json
 {
@@ -123,7 +129,8 @@ node node_modules/byul/dist/setup.mjs
   "language": "English", // 언어 설정, 모든 언어를 지원합니다.
   "model": "gpt-4o-mini", // 모델 설정, 모든 ChatGPT 모델을 지원합니다.
 
-  "commitTypes": { // 선택 사항, 프로젝트 요구에 맞게 구성할 수 있습니다.
+  "commitTypes": {
+    // 선택 사항, 프로젝트 요구에 맞게 구성할 수 있습니다.
     "feat": "Feature (new feature)",
     "fix": "Bug fix (bug fix)",
     "refactor": "Refactoring",
@@ -224,11 +231,27 @@ git commit -m "Add login logic"
 
 **Q. AI 커밋 모드가 작동하지 않습니다.**
 
-**A.** `.env` 파일에 `OPENAI_API_KEY`가 포함되어 있는지 확인하세요. 이 키가 없으면 AI 모드가 작동하지 않습니다. 키를 추가하고 다시 시도하세요.
+**A.** `.env` 파일에 `OPENAI_API_KEY키키가 포함되어 있는지 확인하세요. 이 키가 없으면 AI 모드가 작동하지 않습니다. 키를 추가하고 다시 시도하세요. 또는 유효하지 않는 `OPENAI_API_KEY키가 포함되어 있을 경우 커밋을 중단시킵니다.
 
 **Q. 어떤 모델을 사용해야 하나요?**
 
 **A.** 모든 ChatGPT 모델을 사용할 수 있지만, `gpt-4o-mini` 모델을 사용하는 것을 권장합니다.
+
+**Q. 가끔은 byul 포맷팅 없이 커밋을 하고 싶습니다. 가능할까요?**
+
+**A.** `.env` 파일에 `BYUL_ALL_OFF=true` 환경 변수를 추가해주시면 됩니다.
+
+```env
+BYUL_ALL_OFF=true
+```
+
+**Q. 저는 husky를 이용하고 있는데 byul이 아예 작동 하지 않는 것 같습니다.**
+
+**A.** husky를 사용할 경우 훅스크립트 파일이 생성되지 않는 경우가 있습니다. 아래의 명령어를 복사해서 훅 스크립트를 추가해주세요.
+
+```bash
+echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > .husky/prepare-commit-msg
+```
 
 ## Contributing
 

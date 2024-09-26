@@ -10,6 +10,7 @@ import { dirname } from "path";
 import { Taskl, Task, TasklOptions } from "taskl";
 import { legacyFormatCommitMessage } from "./legacyFormatCommitMessage.js";
 import { detectCommitMode } from "./detectCommitMode.js";
+import { isValidOpenAIKey } from "./isValidOpenAIKey.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,7 +21,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });
 
-const ANSI_COLORS = {
+export const ANSI_COLORS = {
   cyan: "\x1b[36m",
   gray: "\x1b[90m",
   green: "\x1b[32m",
@@ -112,12 +113,18 @@ async function generateCommitMessage(commitMsgFile: string): Promise<void> {
   let changesSummary: string;
   let issueNumber: string;
   let commitMessage: string;
+  if (process.env.BYUL_ALL_OFF === "true") {
+    console.warn(
+      `${ANSI_COLORS.yellow}Warning: byul format is ALL OFF.${ANSI_COLORS.reset}`
+    );
+    return;
+  }
 
   const { mode } = detectCommitMode();
   if (mode === "amend" || mode === "squash" || mode === "merge") {
     console.log();
     console.log(
-      `${ANSI_COLORS.red} byul does not work when 'SQUASH' or 'AMEND'...${ANSI_COLORS.reset}`
+      `${ANSI_COLORS.yellow} byul does not work when 'SQUASH', 'AMEND' or 'MERGE'...${ANSI_COLORS.reset}`
     );
     console.log();
     return;
@@ -131,9 +138,20 @@ async function generateCommitMessage(commitMsgFile: string): Promise<void> {
     );
   }
 
-  if (!Boolean(config.AI ?? true)) {
+  if (!config.AI || !process.env.OPENAI_API_KEY) {
+    console.warn(
+      `${ANSI_COLORS.yellow}Currently, commit formatting is being done without AI because there is no OPEN_API_KEY.${ANSI_COLORS.reset}`
+    );
+    console.warn(
+      `${ANSI_COLORS.yellow}If you want to use AI for commits, please add OPEN_API_KEY to the .env file.${ANSI_COLORS.reset}`
+    );
     await legacyFormatCommitMessage();
     return;
+  }
+
+  const result = await isValidOpenAIKey(process.env.OPENAI_API_KEY);
+  if (result) {
+    console.warn("ERROR: is Not Valid API KEY");
   }
 
   const tasks: Task[] = [

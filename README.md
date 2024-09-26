@@ -12,38 +12,42 @@ Get **byul** up and running quickly!
 #### AI Mode
 
 1. **Install**:
-    ```bash
-    npm install byul
-    ```
+
+   ```bash
+   npm install byul
+   ```
 
 2. **Set Up .env**:
-    ```bash
-    OPENAI_API_KEY=your_openai_api_key
-    ```
+
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key
+   ```
 
 3. **Use Commit**:
-    ```bash
-    git commit
-    ```
+   ```bash
+   git commit
+   ```
 
 #### AI Mode Disabled
 
 1. **Install**:
-    ```bash
-    npm install byul
-    ```
+
+   ```bash
+   npm install byul
+   ```
 
 2. **Configure byul.config.json**:
-    ```json
-    {
-        "AI": false
-    }
-    ```
+
+   ```json
+   {
+     "AI": false
+   }
+   ```
 
 3. **Use Commit**:
-    ```bash
-    git commit -m "commit message"
-    ```
+   ```bash
+   git commit -m "commit message"
+   ```
 
 ## Installation
 
@@ -96,7 +100,8 @@ The `byul.config.json` file must be placed in the root directory of your project
   "language": "English", // Language setting, all languages are supported.
   "model": "gpt-4o-mini", // Model setting, all ChatGPT models are supported.
 
-  "commitTypes": { // Optional, configure as per the project needs.
+  "commitTypes": {
+    // Optional, configure as per the project needs.
     "feat": "Feature (new feature)",
     "fix": "Bug fix (bug fix)",
     "refactor": "Refactoring",
@@ -189,7 +194,6 @@ The commit message will be formatted as:
 
 This flexibility allows you to define a format that best suits your project's needs.
 
-
 ## FAQ
 
 **Q. The commit message is not automatically formatted.**
@@ -203,6 +207,22 @@ This flexibility allows you to define a format that best suits your project's ne
 **Q. Which model should I use?**
 
 **A.** Any ChatGPT model can be used, but we recommend using the `gpt-4o-mini` model.
+
+**Q. Is it possible to commit without byul formatting sometimes?**
+
+**A.** Add the `BYUL_ALL_OFF=true` environment variable to the `.env` file.
+
+```env
+BYUL_ALL_OFF=true
+```
+
+**Q. I'm using husky, but byul doesn't seem to work at all.**
+
+**A.** If you are using husky, there may be cases where the hook script file is not created. Please copy the following command to add the hook script.
+
+```bash
+echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > .husky/prepare-commit-msg
+```
 
 ## Contributing
 
