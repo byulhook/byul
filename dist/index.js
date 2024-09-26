@@ -9,13 +9,14 @@ import { dirname } from "path";
 import { Taskl } from "taskl";
 import { legacyFormatCommitMessage } from "./legacyFormatCommitMessage.js";
 import { detectCommitMode } from "./detectCommitMode.js";
+import { isValidOpenAIKey } from "./isValidOpenAIkey.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || "",
 });
-const ANSI_COLORS = {
+export const ANSI_COLORS = {
     cyan: "\x1b[36m",
     gray: "\x1b[90m",
     green: "\x1b[32m",
@@ -79,11 +80,14 @@ async function generateInitialCommitMessage(summary, issueNumber, config) {
     return ((_c = (_b = (_a = response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) || "";
 }
 async function generateCommitMessage(commitMsgFile) {
-    var _a;
     let config;
     let changesSummary;
     let issueNumber;
     let commitMessage;
+    if (process.env.BYUL_ALL_OFF === "true") {
+        console.warn(`${ANSI_COLORS.yellow}Warning: byul format is ALL OFF.${ANSI_COLORS.reset}`);
+        return;
+    }
     const { mode } = detectCommitMode();
     if (mode === "amend" || mode === "squash" || mode === "merge") {
         console.log();
@@ -95,10 +99,14 @@ async function generateCommitMessage(commitMsgFile) {
     if (!config.commitTypes) {
         console.warn(`${ANSI_COLORS.yellow}Warning: No commit types defined in byul.config.json file.${ANSI_COLORS.reset}`);
     }
-    if (!Boolean((_a = config.AI) !== null && _a !== void 0 ? _a : true)) {
+    if (!config.AI || !process.env.OPENAI_API_KEY) {
+        console.warn(`${ANSI_COLORS.yellow}Currently, commit formatting is being done without AI because there is no OPEN_API_KEY.${ANSI_COLORS.reset}`);
+        console.warn(`${ANSI_COLORS.yellow}If you want to use AI for commits, please add OPEN_API_KEY to the .env file.${ANSI_COLORS.reset}`);
         await legacyFormatCommitMessage();
         return;
     }
+    const result = await isValidOpenAIKey(process.env.OPENAI_API_KEY);
+    result && console.warn("ERROR");
     const tasks = [
         {
             text: "Analyzing staged changes",
