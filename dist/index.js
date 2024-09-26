@@ -91,7 +91,7 @@ async function generateCommitMessage(commitMsgFile) {
     const { mode } = detectCommitMode();
     if (mode === "amend" || mode === "squash" || mode === "merge") {
         console.log();
-        console.log(`${ANSI_COLORS.red} byul does not work when 'SQUASH' or 'AMEND'...${ANSI_COLORS.reset}`);
+        console.log(`${ANSI_COLORS.yellow} byul does not work when 'SQUASH', 'AMEND' or 'MERGE'...${ANSI_COLORS.reset}`);
         console.log();
         return;
     }
