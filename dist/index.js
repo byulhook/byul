@@ -9,7 +9,7 @@ import { dirname } from "path";
 import { Taskl } from "taskl";
 import { legacyFormatCommitMessage } from "./legacyFormatCommitMessage.js";
 import { detectCommitMode } from "./detectCommitMode.js";
-import { isValidOpenAIKey } from "./isValidOpenAIkey.js";
+import { isValidOpenAIKey } from "./isValidOpenAIKey.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config();
@@ -106,7 +106,9 @@ async function generateCommitMessage(commitMsgFile) {
         return;
     }
     const result = await isValidOpenAIKey(process.env.OPENAI_API_KEY);
-    result && console.warn("ERROR");
+    if (result) {
+        console.warn("ERROR: is Not Valid API KEY");
+    }
     const tasks = [
         {
             text: "Analyzing staged changes",
