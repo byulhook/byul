@@ -42,7 +42,6 @@
   "scripts": {
     "build": "tsc",
     "preinstall": "node dist/setup.mjs",
-    "prepare": "husky"
   },
   "overrides": {
     "whatwg-url": "13.0.0"
