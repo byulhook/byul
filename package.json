@@ -37,12 +37,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.5",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "scripts": {
     "build": "tsc",
-    "preinstall": "node dist/setup.mjs",
-    "start": "node --loader ts-node/esm src/index.ts"
+    "preinstall": "node dist/setup.mjs"
+  },
+  "overrides": {
+    "whatwg-url": "13.0.0"
   }
 }
