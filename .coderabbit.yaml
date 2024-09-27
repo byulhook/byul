@@ -14,5 +14,9 @@ reviews:
       - "main"
       - "develop"
       - "release/*"
-chat:
+  path_filters:
+    include:
+      - "**/dist/**"
+    exclude:
+      - "**/node_modules/**"
   auto_reply: true
