@@ -81,14 +81,27 @@ function writeConfigFile(filePath, defaultConfig) {
 }
 
 function readByulHookFile() {
-  const byulHookFile = path.join(
-    rootDir,
-    "node_modules",
-    "byul",
-    "dist",
-    "byul_script"
-  );
-  return readFileSync(byulHookFile, "utf8");
+  const possiblePaths = [
+    path.join(rootDir, "node_modules", "byul", "dist", "byul_script"),
+    path.join(
+      rootDir,
+      "..",
+      "..",
+      "node_modules",
+      "byul",
+      "dist",
+      "byul_script"
+    ),
+    path.join(rootDir, "byul", "dist", "byul_script"),
+  ];
+
+  for (const byulHookFile of possiblePaths) {
+    if (existsSync(byulHookFile)) {
+      return readFileSync(byulHookFile, "utf8");
+    }
+  }
+
+  throw new Error("Unable to find byul_script file.");
 }
 
 function setupCommitMsgHook() {
