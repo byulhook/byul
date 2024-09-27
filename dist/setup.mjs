@@ -99,7 +99,17 @@ function setupCommitMsgHook() {
     const byulHookContent = readByulHookFile();
 
     if (isHuskyInstalled()) {
-      execSync(`echo '${byulHookContent}' >> .husky/${hookName}`);
+      const huskyHookPath = path.join(rootDir, ".husky", hookName);
+      let existingHuskyHook = "";
+      if (existsSync(huskyHookPath)) {
+        existingHuskyHook = readFileSync(huskyHookPath, "utf8");
+      }
+
+      const hasByulCommand = existingHuskyHook.includes(byulHookContent.trim());
+
+      if (!hasByulCommand) {
+        execSync(`echo '${byulHookContent}' >> .husky/${hookName}`);
+      }
     } else {
       let existingHook = "";
       if (existsSync(hookFile)) {
