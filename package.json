@@ -1,6 +1,6 @@
 {
   "name": "byul",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Write commit messages in 3 second",
   "main": "dist/index.js",
   "license": "MIT",
@@ -37,12 +37,14 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.5",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "scripts": {
     "build": "tsc",
     "preinstall": "node dist/setup.mjs",
-    "start": "node --loader ts-node/esm src/index.ts"
+    "prepare": "husky"
+  },
+  "overrides": {
+    "whatwg-url": "13.0.0"
   }
 }

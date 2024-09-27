@@ -25,31 +25,16 @@ async function legacyFormatCommitMessage() {
     }
     const tasks = [
         {
-            text: "Retrieving branch information",
+            text: "Formatting commit message",
             run: async () => {
                 branchName = execSync("git rev-parse --abbrev-ref HEAD")
                     .toString()
                     .trim();
-            },
-        },
-        {
-            text: "Getting commit message file",
-            run: async () => {
                 commitMsgFile = process.env.HUSKY_GIT_PARAMS || process.argv[2];
                 if (!commitMsgFile) {
                     throw new Error("No commit message file provided.");
                 }
-            },
-        },
-        {
-            text: "Reading commit message",
-            run: async () => {
                 commitMessage = readFileSync(commitMsgFile, "utf8");
-            },
-        },
-        {
-            text: "Formatting commit message",
-            run: async () => {
                 const lines = commitMessage.split("\n");
                 let title = "";
                 let bodyStartIndex = 0;

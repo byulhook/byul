@@ -1,0 +1,31 @@
+# ----------- Start of byul script ------------
+# !WARNING: Do not modify this script. Modifications may break byul functionality.
+# !If you want to add other prepare-commit-msg scripts, please add them above the `--Start of byul script--` comment
+MODULE_NAME="byul"
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
+
+find_module() {
+    if [ -d "$PROJECT_ROOT/node_modules/$MODULE_NAME" ]; then
+        return 0
+    fi
+
+    if grep -q "\"$MODULE_NAME\"" "$PROJECT_ROOT/package.json" 2>/dev/null; then
+        return 0
+    fi
+
+    if command -v $MODULE_NAME >/dev/null 2>&1; then
+        return 0
+    fi
+
+    return 1
+}
+
+if find_module; then
+    node node_modules/byul/dist/index.js "$1" "$2" "$3"
+else
+    :
+fi
+
+exit 0
+# ----------- End of byul script ------------
