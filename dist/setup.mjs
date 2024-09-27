@@ -80,32 +80,51 @@ function writeConfigFile(filePath, defaultConfig) {
   }
 }
 
+function readByulHookFile() {
+  const byulHookFile = path.join(
+    rootDir,
+    "node_modules",
+    "byul",
+    "dist",
+    "byul_script"
+  );
+  return readFileSync(byulHookFile, "utf8");
+}
+
 function setupCommitMsgHook() {
   const hookName = "prepare-commit-msg";
   const hookFile = path.join(gitHookDir, hookName);
+  const SHEBANG = "#!/bin/sh";
   try {
+    const byulHookContent = readByulHookFile();
+
     if (isHuskyInstalled()) {
-      execSync(
-        `echo 'node node_modules/byul/dist/index.js "$1" "$2" "$3"' > .husky/${hookName}`
-      );
+      const huskyHookPath = path.join(rootDir, ".husky", hookName);
+      let existingHuskyHook = "";
+      if (existsSync(huskyHookPath)) {
+        existingHuskyHook = readFileSync(huskyHookPath, "utf8");
+      }
+
+      const hasByulCommand = existingHuskyHook.includes(byulHookContent.trim());
+
+      if (!hasByulCommand) {
+        execSync(`echo '${byulHookContent}' >> .husky/${hookName}`);
+      }
     } else {
       let existingHook = "";
       if (existsSync(hookFile)) {
         existingHook = readFileSync(hookFile, "utf8");
       }
 
-      const shebang = "#!/bin/sh";
-      const byulHookCommand = `node node_modules/byul/dist/index.js "$1" "$2" "$3"`;
-
       let newHookContent = "";
 
       if (existingHook) {
         const lines = existingHook.split("\n");
-        const hasShebang = lines[0].startsWith(shebang);
-        const hasByulCommand = existingHook.includes(byulHookCommand);
+        const hasShebang = lines[0].startsWith(SHEBANG);
+        const hasByulCommand = existingHook.includes(byulHookContent.trim());
 
         if (!hasShebang) {
-          newHookContent += shebang + "\n";
+          newHookContent += SHEBANG + "\n";
         } else {
           newHookContent += lines[0] + "\n";
         }
@@ -114,10 +133,10 @@ function setupCommitMsgHook() {
         newHookContent += hookBody.trim() ? hookBody + "\n" : "";
 
         if (!hasByulCommand) {
-          newHookContent += "\n" + byulHookCommand + "\n";
+          newHookContent += "\n" + byulHookContent + "\n";
         }
       } else {
-        newHookContent = `${shebang}\n\n${byulHookCommand}\n`;
+        newHookContent = `${SHEBANG}\n\n${byulHookContent}\n`;
       }
 
       writeFileSync(hookFile, newHookContent, { mode: 0o755 });
