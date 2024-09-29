@@ -111,7 +111,7 @@ function setupCommitMsgHook() {
       const hasByulCommand = existingHuskyHook.includes(byulHookContent.trim());
 
       if (!hasByulCommand) {
-        execSync(`echo '${byulHookContent}' >> .husky/${hookName}`);
+        execSync(`echo '\n${byulHookContent}' >${rootDir}/.husky/${hookName}`);
       }
     } else {
       let existingHook = "";
