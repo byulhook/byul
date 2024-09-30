@@ -1,10 +1,21 @@
 import { execSync } from "child_process";
-import { writeFileSync, existsSync, readFileSync } from "fs";
+import { writeFileSync, existsSync, readFileSync, mkdirSync, chmodSync } from "fs";
 import path, { join } from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const ANSI_COLORS = {
+    cyan: "\x1b[36m",
+    gray: "\x1b[90m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    blue: "\x1b[34m",
+    yellow: "\x1b[33m",
+    reset: "\x1b[0m",
+};
+
 
 function findGitDir(startDir) {
   let currentDir = startDir;
@@ -94,6 +105,32 @@ function readByulHookFile() {
   throw new Error("Unable to find byul_script file.");
 }
 
+
+function setupGitHook(hookName, byulHookContent) {
+  const rootDir = findGitDir(__dirname);
+  if (!rootDir) {
+    console.error("Git repository not found.");
+    return;
+  }
+
+  const hookPath = path.join(rootDir, '.husky', hookName);
+
+  try {
+    mkdirSync(path.join(rootDir, '.husky'), { recursive: true });
+
+    writeFileSync(hookPath, byulHookContent, 'utf8');
+
+    if (process.platform !== 'win32') {
+      chmodSync(hookPath, '755');
+    }
+
+    console.log(`${ANSI_COLORS.green}byul has been successfully set up for prepare-commit-msg!${ANSI_COLORS.reset}`);
+  } catch (error) {
+    console.error(`Error setting up Git hook: ${error.message}`);
+  }
+}
+
+
 function setupCommitMsgHook() {
   const hookName = "prepare-commit-msg";
   const hookFile = path.join(gitHookDir, hookName);
@@ -111,7 +148,7 @@ function setupCommitMsgHook() {
       const hasByulCommand = existingHuskyHook.includes(byulHookContent.trim());
 
       if (!hasByulCommand) {
-        execSync(`echo '${byulHookContent}' >> .husky/${hookName}`);
+        setupGitHook(hookName, byulHookContent);
       }
     } else {
       let existingHook = "";
@@ -147,6 +184,7 @@ function setupCommitMsgHook() {
       if (process.platform !== "win32") {
         execSync(`chmod +x "${hookFile}"`);
       }
+        console.log(`${ANSI_COLORS.green}byul has been successfully set up for prepare-commit-msg!${ANSI_COLORS.reset}`);
     }
   } catch (error) {
     console.error(`Failed to set up the commit message hook: ${error.message}`);
