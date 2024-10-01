@@ -1,4 +1,4 @@
-language: "ko-KR"
+language: 'ko-KR'
 reviews:
   request_changes_workflow: false
   high_level_summary: true
@@ -8,15 +8,11 @@ reviews:
   auto_review:
     enabled: true
     ignore_title_keywords:
-      - "WIP"
-      - "DO NOT MERGE"
+      - 'WIP'
+      - 'DO NOT MERGE'
     base_branches:
-      - "main"
-      - "develop"
-      - "release/*"
-  path_filters:
-    include:
-      - "**/dist/**"
-    exclude:
-      - "**/node_modules/**"
+      - 'main'
+      - 'develop'
+      - 'release/*'
+chat:
   auto_reply: true
